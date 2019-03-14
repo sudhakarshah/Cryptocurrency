@@ -2,54 +2,40 @@ package main
 
 import(
 	"sync"
-	"net"
+	"errors"
 )
 
 type Node struct{
-	IntroductionConnection net.Conn
-	Messages Box
-	Pred NList
-	Succ NList
-	//FingerTable 
-	//HashTable 
-	quit bool
-	mux sync.Mutex
+	Name string
+	Ip string
+	Port string
+	LastActive int
 }
 
 
-/*
-func (nd *Node) FindSuccessor(id int){
-
+type Box struct{
+	messages []Msg
+	mux sync.mutex
 }
 
-func (nd *Node) FindPredecessor(id int){
-
+func (in*Box) enqueue(m Msg){
+	in.mux.Lock()
+	in.messages = append(in.messages, m)
+	in.mux.Unlock()
 }
 
-func (nd *Node) Join(nn *Node){
-
+func (in*Box) pop()(Msg,error){
+	var output Msg
+	var err error = nil
+	in.mux.Lock()
+	if len(in.messages) != 0{
+		output = in.messages[0]
+		in.messages = in.messages[1:]
+	} else {
+		err = errors.New("The inbox is empty")
+	}
+	in.mux.Unlock()
+	return output, err
 }
-
-func (nd *Node) InitFingerTable(nn *Node){
-
-}
-
-func (nd *Node) UpdateOthers(){
-
-}
-
-func (nd *Node) UpdateFingerTable(node_name string, i int){
-
-}
-
-func (nd *Node) Gossip(){
-
-}
-
-func (nd *Node) HandleMessage(s string){
-
-}
-*/
-
 
 

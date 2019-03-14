@@ -14,6 +14,7 @@ type Msg struct{
 
 func (m *Msg)Parse(s string){
 	tokens := strings.Split(strings.TrimSpace(s), " ")
+	m.data["type"] = tokens[0]
 	switch tokens[0] {
 	case "CONNECT":
 		m.parseConnect(tokens...)
@@ -21,10 +22,8 @@ func (m *Msg)Parse(s string){
 		m.parseIntroduce(tokens...)
 	case "TRANSACTION":
 		m.parseTransaction(tokens...)
-	case "DIE":
-		m.data["type"] = tokens[0]
-	case "QUIT":
-		m.data["type"] = tokens[0]
+	case "LEAVE":
+
 	default:
 		fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %s\n", tokens[0])
 	}
@@ -47,6 +46,9 @@ func (m *Msg)parseTransaction(tokens ...string){
 	m.data["name"] = tokens[1]
 	m.data["ip"] = tokens[2]
 	m.data["port"] = tokens[3]
+}
+func (m * Msg)GetName()string{
+	return m.data["name"]
 }
 
 func (m * Msg)GetType()string{

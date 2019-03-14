@@ -7,8 +7,6 @@ import(
 	"crypto/sha1"
 )
 
-// Sha-1 produces 160 bit digest
-var M = 160
 
 type NodeInfo struct{
 	Hash string
