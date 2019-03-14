@@ -9,6 +9,7 @@ import(
 
 type Msg struct{
 	data map[string] string
+	Friends []Node
 }
 
 
@@ -23,10 +24,15 @@ func (m *Msg)Parse(s string){
 	case "TRANSACTION":
 		m.parseTransaction(tokens...)
 	case "LEAVE":
-
+		m.parseConnect(tokens...)
 	default:
 		fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %s\n", tokens[0])
 	}
+}
+
+func (m *Msg)FormatPingMessage(friends []Node){
+	m.data["type"]="PING"
+	m.Friends = friends
 }
 
 func (m *Msg)parseConnect(tokens ...string){

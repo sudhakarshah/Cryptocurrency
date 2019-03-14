@@ -113,6 +113,17 @@ func startListening(inbox * Box, port string){
 	}
 }
 
+func sendJson(ip string, port string, m Msg){
+	conn, err := net.Dial("tcp", ip+":"+port)
+	if err != nil {
+		// TODO: cant dial
+	}
+	if e := json.NewEncoder(conn).Encode(m); e != nil {
+		// TODO: json failed to send
+	}
+	conn.Close()
+}
+
 func main(){
 	// Expects 3 arguments: ip, port, 
 	if len(os.Args) != 5 {
@@ -128,10 +139,13 @@ func main(){
 
 	inbox := Box{}
 	members := []Node
+	var hashtable map[string]Msg
+	name := os.Args[4]
+	port := os.Args[3]
 
 	// TODO: open port to listen to other nodes in another thread
-	go startListening(inbox, os.Args[4])
-	connect_string := fmt.Sprintf("CONNECT %s %s %s\n", os.Args[4], ip, os.Args[3])
+	go startListening(inbox, port)
+	connect_string := fmt.Sprintf("CONNECT %s %s %s\n", name, ip, port)
 	conn, err := connect_to_intro(os.Args[1], os.Args[2])
 	fmt.Fprintf(conn, connect_string)
 	go handleIntroRequest(&inbox, &conn)
@@ -146,22 +160,63 @@ func main(){
 		switch m.GetType() {
 		case "INTRODUCE":
 			// connect to the introduced node and send membership
-			nd := Node{}
+			nd := Node{Name:m.GetName, Ip:m.GetIp(), Port:m.GetPort(), LastActive:-1}
+			ping := Msg{}
+			ping.FormatPingMessage(members)
 			// send 
+			sendJson(m.GetIp(), m.GetPort(), ping)
 
 		case "TRANSACTION":
 			// check if the transaction exists if so, continue
 
+			if val, ok := hashtable[m.GetTID()]; ok{
+				continue
+			}
+
 			// Insert transaction
+			hashtable[m.GetTID()] = m
 
 			// TODO: Gossip the transaction
+			for i, nd := range members{
+				coin := rand.Intn(1)
+				if coin < 1{
+					continue
+				}
+				sendJson(nd.Ip, nd.Port, m)
+			}
 		case "DIE":
 			os.Exit(3)
 		case "QUIT":
-			// Send everyone that 
+			quit := Msg{}
+			quit.Parse(fmt.Sprintf("LEAVE %s %s %s", name, ip, port))
+			// Send leave message to everyone
+			for i, nd := range members{
+				sendJson(nd.Ip, nd.Port, quit)
+			}
+			os.Exit(3)
 		case "LEAVE":
-			// find the leaving node's ip and name in the members and remove
+			found := false
+			// check if the leaving node is in  the members
+			for i, nd := range members(
+				if nd.IP == m.GetIP() && nd.Port == m.GetPort() && nd.Name == m.GetName(){
+					found = true
+					members = append(members[:i],members[i+1:]...)
+					break
+				}
+			)
+			if !found {
+				continue
+			}
+
+			// If so, then forward the message to others
+			for i, nd := range members{
+				sendJson(nd.Ip, nd.Port, m)
+			}
 		case  "PING":
+			pf := m.Friends
+			for i, nd := range pf {
+				
+			}
 		default:
 			fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %s\n", tokens[0])
 		}

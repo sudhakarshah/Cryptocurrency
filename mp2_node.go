@@ -3,6 +3,7 @@ package main
 import(
 	"sync"
 	"errors"
+	"net"
 )
 
 type Node struct{
@@ -10,6 +11,10 @@ type Node struct{
 	Ip string
 	Port string
 	LastActive int
+}
+
+type (nd *Node) Ping(friends []Node, conn *net.Conn){
+
 }
 
 
