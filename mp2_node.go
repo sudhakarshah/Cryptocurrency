@@ -3,24 +3,19 @@ package main
 import(
 	"sync"
 	"errors"
-	"net"
 )
 
 type Node struct{
 	Name string
 	Ip string
 	Port string
-	LastActive int
-}
-
-type (nd *Node) Ping(friends []Node, conn *net.Conn){
-
+	LastActive int64
 }
 
 
 type Box struct{
 	messages []Msg
-	mux sync.mutex
+	mux sync.Mutex
 }
 
 func (in*Box) enqueue(m Msg){

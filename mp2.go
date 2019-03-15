@@ -6,6 +6,8 @@ import (
 	"os"
 	"errors"
 	"time"
+	"encoding/json"
+	"math/rand"
 )
 
 var DEBUG = true
@@ -58,11 +60,11 @@ func get_my_ip() (string, error) {
 	return "", errors.New("are you connected to the network?")
 }
 
-func getRequest(conn *net.Conn)string {
+func getRequest(conn net.Conn)string {
 	// Make a buffer to hold incoming data.
 	buf := make([]byte, 4096)
 	// Read the incoming connection into the buffer.
-	reqLen, err := (*conn).Read(buf)
+	reqLen, err := conn.Read(buf)
 	_ = reqLen
 	if err != nil {
 		fmt.Println("Error reading:", err.Error())
@@ -70,18 +72,21 @@ func getRequest(conn *net.Conn)string {
 	return string(buf)
 }
 
-func queueIntroRequest(inbox *Box, conn *net.Conn){
+func queueIntroRequest(inbox *Box, conn net.Conn){
 	for {
 		s := getRequest(conn)
-		m := Msg{}
-		m.Parse(s)
-		inbox.enqueue(m)
-		time.Sleep(1)
+		fmt.Println(s)
+		if len(s) > 0{
+			m := Msg{Friends:make(map[string]Node)}
+			m.Parse(s)
+			inbox.enqueue(m)
+			time.Sleep(1)
+		}
 	}
 }
 
 func printDebug(s string){
-	t := int32(time.Now().Unix())
+	t := int64(time.Now().Unix())
 	fmt.Printf("[DEBUG]%d: %s\n",t,s)
 
 }
@@ -90,7 +95,7 @@ func printDebug(s string){
 // TODO: Recieve Message and close connection
 func listener(inbox * Box, in_con net.Conn){
 	var m Msg
-	dec := jsor.NewDecoder(*in_con)
+	dec := json.NewDecoder(in_con)
 	if err := dec.Decode(&m); err != nil{
 		// Something went wrong
 		return
@@ -100,28 +105,37 @@ func listener(inbox * Box, in_con net.Conn){
 
 // TODO: Spawn listern threads for each connection
 func startListening(inbox * Box, port string){
-	ln, err := net.Listen("tcp", fmt.Sprintf(":%s",port))
+	ln, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		// handle error
+		fmt.Printf("[ERROR] %s", err)
+
 	}
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
 			// handle error
+			fmt.Printf("[ERROR] %s", err)
 		}
 		go listener(inbox, conn)
 	}
 }
 
-func sendJson(ip string, port string, m Msg){
+func sendJson(ip string, port string, m Msg)int{
+	fmt.Println("JSON sending to "+ip + ":" + port)
 	conn, err := net.Dial("tcp", ip+":"+port)
 	if err != nil {
 		// TODO: cant dial
+		fmt.Printf("[ERROR] %s", err)
+		return -1
 	}
 	if e := json.NewEncoder(conn).Encode(m); e != nil {
 		// TODO: json failed to send
+		fmt.Printf("[ERROR] %s", e)
+		return -1
 	}
 	conn.Close()
+	return 0
 }
 
 func main(){
@@ -138,17 +152,22 @@ func main(){
 	}
 
 	inbox := Box{}
-	members := []Node
+	var members map[string]Node
 	var hashtable map[string]Msg
+	members = make(map[string]Node)
+	hashtable = make(map[string]Msg)
 	name := os.Args[4]
 	port := os.Args[3]
 
 	// TODO: open port to listen to other nodes in another thread
-	go startListening(inbox, port)
+	go startListening(&inbox, port)
 	connect_string := fmt.Sprintf("CONNECT %s %s %s\n", name, ip, port)
 	conn, err := connect_to_intro(os.Args[1], os.Args[2])
+	if err != nil{
+		fmt.Println(err)
+	}
 	fmt.Fprintf(conn, connect_string)
-	go handleIntroRequest(&inbox, &conn)
+	go queueIntroRequest(&inbox, conn)
 
 	// handle requests
 	for {
@@ -157,68 +176,108 @@ func main(){
 			time.Sleep(1)
 			continue
 		}
+		fmt.Printf("members: %+v\nhashtable: %d\n", members, len(hashtable))
+		ok := m.HasIp()
+		if ok && m.GetIp() == ip {
+			m.SetIp("localhost")
+		}
 		switch m.GetType() {
 		case "INTRODUCE":
-			// connect to the introduced node and send membership
-			nd := Node{Name:m.GetName, Ip:m.GetIp(), Port:m.GetPort(), LastActive:-1}
-			ping := Msg{}
-			ping.FormatPingMessage(members)
+			// send JOIN MESSAGE then INIT message
+			join := Msg{}
+			join.Parse(fmt.Sprintf("JOIN %s %s %s", name, ip, port))
+
+			fmt.Printf("Sending JOIN msg to %s\n", m.GetName())
+
 			// send 
-			sendJson(m.GetIp(), m.GetPort(), ping)
+			if sendJson(m.GetIp(), m.GetPort(), join) == 0{
+				fmt.Printf("Sent JOIN msg to %s\n", m.GetName())
+				nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix())}
+				members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = nd
+			}
+		case "JOIN":
+			fmt.Printf("Sending INIT msg to %s\n", m.GetName())
+			// Send init message
+			init := Msg{}
+			init.FormatInit(members, hashtable, fmt.Sprintf("INIT %s %s %s", name, ip, port))
+			if sendJson(m.GetIp(), m.GetPort(), init) == 0{
+				fmt.Printf("Sent INIT msg to %s\n", m.GetName())
+				nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix())}
+				members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = nd
+			}
+		case "INIT":
+			nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix())}
+			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = nd
+			for k, v := range m.Friends{
+				if _, ok := members[k]; ok{
+					fmt.Println("Friend Exists")
+					continue
+				}
+				intro := Msg{}
+				intro.Parse(fmt.Sprintf("INTRODUCE %s %s %s", v.Name, v.Ip, v.Port))
+				inbox.enqueue(intro)
+			}
+			for k, v := range m.HashTable{
+				hashtable[k] = v
+			}
 
 		case "TRANSACTION":
 			// check if the transaction exists if so, continue
 
-			if val, ok := hashtable[m.GetTID()]; ok{
+			if _, ok := hashtable[m.GetTID()]; ok{
+				fmt.Println("TRANSACTION EXISTS")
 				continue
 			}
 
 			// Insert transaction
 			hashtable[m.GetTID()] = m
 
-			// TODO: Gossip the transaction
-			for i, nd := range members{
+			i := 0
+
+			for _, v := range members{
 				coin := rand.Intn(1)
-				if coin < 1{
+				if coin < 1 && i > 3{
 					continue
 				}
-				sendJson(nd.Ip, nd.Port, m)
+				sendJson(v.Ip, v.Port, m)
+				i += 1
 			}
 		case "DIE":
 			os.Exit(3)
 		case "QUIT":
-			quit := Msg{}
+			quit := Msg{Friends:make(map[string]Node)}
 			quit.Parse(fmt.Sprintf("LEAVE %s %s %s", name, ip, port))
 			// Send leave message to everyone
-			for i, nd := range members{
+			for _, nd := range members{
 				sendJson(nd.Ip, nd.Port, quit)
 			}
 			os.Exit(3)
 		case "LEAVE":
-			found := false
-			// check if the leaving node is in  the members
-			for i, nd := range members(
-				if nd.IP == m.GetIP() && nd.Port == m.GetPort() && nd.Name == m.GetName(){
-					found = true
-					members = append(members[:i],members[i+1:]...)
-					break
-				}
-			)
-			if !found {
+			key := fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())
+			if _, ok := members[key]; !ok {
 				continue
 			}
-
+			delete(members, key)
 			// If so, then forward the message to others
-			for i, nd := range members{
+			for _, nd := range members{
 				sendJson(nd.Ip, nd.Port, m)
 			}
 		case  "PING":
+			// update the last active 
+			sender := members[fmt.Sprintf("%s:%s:%s",name,ip,port)]
+			sender.LastActive = int64(time.Now().Unix())
+			members[fmt.Sprintf("%s:%s:%s",name,ip,port)] = sender
 			pf := m.Friends
-			for i, nd := range pf {
-				
+			for k, v := range pf {
+				if _, ok := members[k]; ok {
+					continue
+				}
+				intro := Msg{Friends:make(map[string]Node)}
+				intro.Parse(fmt.Sprintf("INTRODUCE %s %s %s\n", v.Name, v.Ip, v.Port))
+				inbox.enqueue(intro)
 			}
 		default:
-			fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %s\n", tokens[0])
+			fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %+v\n",m )
 		}
 
 	}
