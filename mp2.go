@@ -8,6 +8,7 @@ import (
 	"time"
 	"encoding/json"
 	"math/rand"
+	"strings"
 )
 
 var DEBUG = true
@@ -74,8 +75,7 @@ func getRequest(conn net.Conn)string {
 
 func queueIntroRequest(inbox *Box, conn net.Conn){
 	for {
-		s := getRequest(conn)
-		fmt.Println(s)
+		s := strings.TrimRight(getRequest(conn), "\n")
 		if len(s) > 0{
 			m := Msg{Friends:make(map[string]Node)}
 			m.Parse(s)
@@ -105,7 +105,8 @@ func listener(inbox * Box, in_con net.Conn){
 
 // TODO: Spawn listern threads for each connection
 func startListening(inbox * Box, port string){
-	ln, err := net.Listen("tcp", ":"+port)
+	fmt.Println("Started Listening on " + port)
+	ln, err := net.Listen("tcp4", ":"+port)
 	if err != nil {
 		// handle error
 		fmt.Printf("[ERROR] %s", err)
@@ -123,7 +124,7 @@ func startListening(inbox * Box, port string){
 
 func sendJson(ip string, port string, m Msg)int{
 	fmt.Println("JSON sending to "+ip + ":" + port)
-	conn, err := net.Dial("tcp", ip+":"+port)
+	conn, err := net.Dial("tcp4", ip+":"+port)
 	if err != nil {
 		// TODO: cant dial
 		fmt.Printf("[ERROR] %s", err)
@@ -131,7 +132,7 @@ func sendJson(ip string, port string, m Msg)int{
 	}
 	if e := json.NewEncoder(conn).Encode(m); e != nil {
 		// TODO: json failed to send
-		fmt.Printf("[ERROR] %s", e)
+		fmt.Printf("[ERROR JSON] %s", e)
 		return -1
 	}
 	conn.Close()
@@ -173,13 +174,13 @@ func main(){
 	for {
 		m, err := inbox.pop()
 		if err != nil{
-			time.Sleep(1)
+			time.Sleep(100)
 			continue
 		}
 		fmt.Printf("members: %+v\nhashtable: %d\n", members, len(hashtable))
 		ok := m.HasIp()
 		if ok && m.GetIp() == ip {
-			m.SetIp("localhost")
+			m.SetIp("0.0.0.0")
 		}
 		switch m.GetType() {
 		case "INTRODUCE":
