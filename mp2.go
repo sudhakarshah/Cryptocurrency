@@ -122,7 +122,7 @@ func startListening(inbox * Box, port string){
 func sendJson(ip string, port string, m Msg)int{
 	//fmt.Printf("Sending %s to port %d\n", m.GetType(), len(port))
 	conn, err := net.Dial("tcp", ip+":"+port)
-	startTime := int64(time.Now().Unix())
+	startTime := time.Now()
 	if err != nil {
 		// TODO: cant dial
 		//fmt.Printf("[ERROR] %s", err)
@@ -134,9 +134,8 @@ func sendJson(ip string, port string, m Msg)int{
 		//fmt.Printf("[ERROR JSON] %s", e)
 		return -1
 	}
-	endTime := int64(time.Now().Unix())
 	b, _ := json.Marshal(m)
-	fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), len(b),  endTime - startTime) // time, msg type, size, duration
+	fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), len(b),  time.Since(startTime)) // time, msg type, size, duration
 	return 0
 }
 
