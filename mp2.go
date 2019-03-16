@@ -9,6 +9,8 @@ import (
 	"encoding/json"
 	"math/rand"
 	"strings"
+	"bufio"
+	"sync"
 )
 
 var DEBUG = true
@@ -63,21 +65,15 @@ func get_my_ip() (string, error) {
 
 func getRequest(conn net.Conn)string {
 	// Make a buffer to hold incoming data.
-	buf := make([]byte, 4096)
-	// Read the incoming connection into the buffer.
-	reqLen, err := conn.Read(buf)
-	_ = reqLen
-	if err != nil {
-		fmt.Println("Error reading:", err.Error())
-	}
-	return string(buf)
+	status, _ := bufio.NewReader(conn).ReadString('\n')
+	return strings.TrimSpace(status)
 }
 
 func queueIntroRequest(inbox *Box, conn net.Conn){
 	for {
 		s := strings.TrimRight(getRequest(conn), "\n")
 		if len(s) > 0{
-			m := Msg{Friends:make(map[string]Node)}
+			m := Msg{}
 			m.Parse(s)
 			inbox.enqueue(m)
 			time.Sleep(1)
@@ -100,43 +96,55 @@ func listener(inbox * Box, in_con net.Conn){
 		// Something went wrong
 		return
 	}
+	//fmt.Printf("Recieved %s\n", m.GetType())
 	inbox.enqueue(m)
 }
 
 // TODO: Spawn listern threads for each connection
 func startListening(inbox * Box, port string){
-	fmt.Println("Started Listening on " + port)
-	ln, err := net.Listen("tcp4", ":"+port)
+	//fmt.Println("Started Listening on " + port)
+	ln, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		// handle error
-		fmt.Printf("[ERROR] %s", err)
+		//fmt.Printf("[ERROR] %s", err)
 
 	}
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
 			// handle error
-			fmt.Printf("[ERROR] %s", err)
+			//fmt.Printf("[ERROR] %s", err)
 		}
 		go listener(inbox, conn)
 	}
 }
 
 func sendJson(ip string, port string, m Msg)int{
-	fmt.Println("JSON sending to "+ip + ":" + port)
-	conn, err := net.Dial("tcp4", ip+":"+port)
+	//fmt.Printf("Sending %s to port %d\n", m.GetType(), len(port))
+	conn, err := net.Dial("tcp", ip+":"+port)
+	startTime := int64(time.Now().Unix())
 	if err != nil {
 		// TODO: cant dial
-		fmt.Printf("[ERROR] %s", err)
+		//fmt.Printf("[ERROR] %s", err)
 		return -1
 	}
 	if e := json.NewEncoder(conn).Encode(m); e != nil {
 		// TODO: json failed to send
-		fmt.Printf("[ERROR JSON] %s", e)
+		conn.Close()
+		//fmt.Printf("[ERROR JSON] %s", e)
 		return -1
 	}
-	conn.Close()
+	endTime := int64(time.Now().Unix())
+	b, _ := json.Marshal(m)
+	fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), len(b),  endTime - startTime) // time, msg type, size, duration
 	return 0
+}
+
+func enable_hb(hb *bool, hbmux *sync.Mutex){
+	time.Sleep(1000 * time.Millisecond)
+	(*hbmux).Lock()
+	(*hb) = true
+	(*hbmux).Unlock()
 }
 
 func main(){
@@ -160,65 +168,89 @@ func main(){
 	name := os.Args[4]
 	port := os.Args[3]
 
+	heartbeat := false
+	var hbmux sync.Mutex
+
 	// TODO: open port to listen to other nodes in another thread
 	go startListening(&inbox, port)
 	connect_string := fmt.Sprintf("CONNECT %s %s %s\n", name, ip, port)
 	conn, err := connect_to_intro(os.Args[1], os.Args[2])
 	if err != nil{
-		fmt.Println(err)
+		//fmt.Println(err)
 	}
 	fmt.Fprintf(conn, connect_string)
 	go queueIntroRequest(&inbox, conn)
+	go enable_hb(&heartbeat, &hbmux)
 
 	// handle requests
 	for {
 		m, err := inbox.pop()
 		if err != nil{
-			time.Sleep(100)
+			time.Sleep(1)
 			continue
 		}
-		fmt.Printf("members: %+v\nhashtable: %d\n", members, len(hashtable))
-		ok := m.HasIp()
-		if ok && m.GetIp() == ip {
-			m.SetIp("0.0.0.0")
+		b, _ := json.Marshal(m)
+		fmt.Printf("RECIEVED %d %s %d %d %d\n",int64(time.Now().Unix()), m.GetType(), len(b), len(members), len(hashtable) ) // time, msg type, size, member_count, transaction_count
+		//fmt.Printf("Members Count: %d\nTransaction Count: %d\n", len(members), len(hashtable))
+		hbmux.Lock()
+		if heartbeat{
+			ping := Msg{}
+			ping.FormatPing(members, fmt.Sprintf("PING %s %s %s\n", name, ip, port))
+			var removeList []string
+			// Ping everyone in the contacts
+			for k, v := range members{
+				if v.Ip == ip && v.Port == port {
+					continue
+				}
+				if sendJson(v.Ip, v.Port, ping) != 0 {
+					removeList = append(removeList, k)
+				}else{
+					//fmt.Printf("Pinged %s\n", k)
+				}
+			}
+			// If ping failed, remove from the contacts
+			for _, k := range removeList{
+				//fmt.Printf("Removing %s from members\n", k)
+				delete(members, k)
+			}
+			heartbeat = false
+
 		}
+		hbmux.Unlock()
 		switch m.GetType() {
 		case "INTRODUCE":
 			// send JOIN MESSAGE then INIT message
 			join := Msg{}
 			join.Parse(fmt.Sprintf("JOIN %s %s %s", name, ip, port))
 
-			fmt.Printf("Sending JOIN msg to %s\n", m.GetName())
-
 			// send 
 			if sendJson(m.GetIp(), m.GetPort(), join) == 0{
-				fmt.Printf("Sent JOIN msg to %s\n", m.GetName())
 				nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix())}
 				members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = nd
 			}
 		case "JOIN":
-			fmt.Printf("Sending INIT msg to %s\n", m.GetName())
+			//fmt.Printf("Sending INIT msg to %s\n", m.GetName())
 			// Send init message
 			init := Msg{}
 			init.FormatInit(members, hashtable, fmt.Sprintf("INIT %s %s %s", name, ip, port))
 			if sendJson(m.GetIp(), m.GetPort(), init) == 0{
-				fmt.Printf("Sent INIT msg to %s\n", m.GetName())
+				//fmt.Printf("Sent INIT msg to %s\n", m.GetName())
 				nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix())}
 				members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = nd
 			}
 		case "INIT":
 			nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix())}
 			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = nd
-			for k, v := range m.Friends{
+			for k, v := range m.GetFriends(){
 				if _, ok := members[k]; ok{
-					fmt.Println("Friend Exists")
+					//fmt.Println("Friend Exists")
 					continue
 				}
 				intro := Msg{}
 				intro.Parse(fmt.Sprintf("INTRODUCE %s %s %s", v.Name, v.Ip, v.Port))
 				inbox.enqueue(intro)
 			}
-			for k, v := range m.HashTable{
+			for k, v := range m.GetHashTable(){
 				hashtable[k] = v
 			}
 
@@ -226,7 +258,7 @@ func main(){
 			// check if the transaction exists if so, continue
 
 			if _, ok := hashtable[m.GetTID()]; ok{
-				fmt.Println("TRANSACTION EXISTS")
+				//fmt.Println("TRANSACTION EXISTS")
 				continue
 			}
 
@@ -235,18 +267,26 @@ func main(){
 
 			i := 0
 
-			for _, v := range members{
+			var removeList []string
+
+			for k, v := range members{
 				coin := rand.Intn(1)
 				if coin < 1 && i > 3{
 					continue
 				}
-				sendJson(v.Ip, v.Port, m)
+				if sendJson(v.Ip, v.Port, m) != 0 {
+					removeList = append(removeList, k)
+				}
 				i += 1
+			}
+			for _, k := range removeList{
+				//fmt.Printf("Removing %s from members\n", k)
+				delete(members, k)
 			}
 		case "DIE":
 			os.Exit(3)
 		case "QUIT":
-			quit := Msg{Friends:make(map[string]Node)}
+			quit := Msg{}
 			quit.Parse(fmt.Sprintf("LEAVE %s %s %s", name, ip, port))
 			// Send leave message to everyone
 			for _, nd := range members{
@@ -260,25 +300,33 @@ func main(){
 			}
 			delete(members, key)
 			// If so, then forward the message to others
+			/*
 			for _, nd := range members{
 				sendJson(nd.Ip, nd.Port, m)
 			}
+			*/
 		case  "PING":
+			senderId := fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())
 			// update the last active 
-			sender := members[fmt.Sprintf("%s:%s:%s",name,ip,port)]
+			sender := members[senderId]
 			sender.LastActive = int64(time.Now().Unix())
-			members[fmt.Sprintf("%s:%s:%s",name,ip,port)] = sender
-			pf := m.Friends
+			members[senderId] = sender
+			pf := m.GetFriends()
+			//fmt.Printf("Received ping with friend list length of %d\n", len(pf) )
 			for k, v := range pf {
+				if v.Ip == ip && v.Port == port {
+					continue
+				}
 				if _, ok := members[k]; ok {
 					continue
 				}
-				intro := Msg{Friends:make(map[string]Node)}
-				intro.Parse(fmt.Sprintf("INTRODUCE %s %s %s\n", v.Name, v.Ip, v.Port))
+				intro := Msg{}
+				introString := fmt.Sprintf("INTRODUCE %s %s %s\n", v.Name, v.Ip, v.Port)
+				intro.Parse(introString)
 				inbox.enqueue(intro)
 			}
 		default:
-			fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %+v\n",m )
+			//fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %+v\n",m )
 		}
 
 	}

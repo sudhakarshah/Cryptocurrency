@@ -4,121 +4,157 @@ import(
 	"strings"
 	"fmt"
 	"strconv"
+	"os"
 )
 
 
 type Msg struct{
-	data map[string] string
-	Friends map[string] Node
-	HashTable map[string] Msg
+	Type string
+	Name string
+	Ip string
+	Port int
+	Source int
+	Dest int
+	Amount int
+	TID string
+	TimeStamp string
+	Friends []Node
+	HashTable []Msg
 }
 
 
 func (m *Msg)Parse(s string){
-	m.data = make(map[string]string)
 	tokens := strings.Split(strings.TrimSpace(s), " ")
-	m.data["type"] = tokens[0]
+	m.Type = tokens[0]
 	switch tokens[0] {
 	case "CONNECT":
-		m.parseConnect(tokens...)
+		m.parseStandard(tokens...)
 	case "INTRODUCE":
-		m.parseIntroduce(tokens...)
+		m.parseStandard(tokens...)
 	case "TRANSACTION":
 		m.parseTransaction(tokens...)
 	case "LEAVE":
-		m.parseConnect(tokens...)
+		m.parseStandard(tokens...)
 	case "JOIN":
-		m.parseConnect(tokens...)
+		m.parseStandard(tokens...)
 	default:
 		fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %s\n", tokens[0])
 	}
 }
 
-func (m *Msg)FormatPing(friends map[string]Node){
-	m.data = make(map[string]string)
-	m.data["type"]="PING"
-	m.Friends = friends
+func (m *Msg)FormatPing(friends map[string]Node, s string){
+	tokens := strings.Split(strings.TrimSpace(s), " ")
+	m.parseStandard(tokens...)
+	m.Type ="PING"
+	// Convert map to slice
+	for _,v := range friends{
+		m.Friends = append(m.Friends, v)
+	}
+}
+
+func (m *Msg)GetFriends()map[string]Node{
+	output := make(map[string]Node)
+	for _, v := range m.Friends{
+		k := fmt.Sprintf("%s:%s:%s",v.Name,v.Ip,v.Port)
+		output[k] = v
+	}
+	return output
+}
+func (m *Msg)GetHashTable()map[string]Msg{
+	output := make(map[string]Msg)
+	for _, v := range m.HashTable{
+		output[v.GetTID()] = v
+	}
+	return output
 }
 
 func (m *Msg)FormatInit(friends map[string]Node, hashtable map[string]Msg, s string){
-	m.data = make(map[string]string)
 	tokens := strings.Split(strings.TrimSpace(s), " ")
-	m.parseConnect(tokens...)
-	m.data["type"]="INIT"
-	m.Friends = friends
-	m.HashTable = hashtable
+	m.parseStandard(tokens...)
+	m.Type = "INIT"
+	// Convert map to slice
+	for _,v := range friends{
+		m.Friends = append(m.Friends, v)
+	}
+	for _,v := range hashtable{
+		m.HashTable = append(m.HashTable, v)
+	}
 }
 
-func (m *Msg)parseConnect(tokens ...string){
-	m.data["type"] = tokens[0]
-	m.data["name"] = tokens[1]
-	m.data["ip"] = tokens[2]
-	m.data["port"] = tokens[3]
-}
-func (m *Msg)parseIntroduce(tokens ...string){
-	m.data["type"] = tokens[0]
-	m.data["name"] = tokens[1]
-	m.data["ip"] = tokens[2]
-	m.data["port"] = tokens[3]
+func (m *Msg)parseStandard(tokens ...string){
+	m.Type = tokens[0]
+	m.Name = tokens[1]
+	m.Ip = tokens[2]
+	port, err := strconv.Atoi(tokens[3])
+	if err != nil {
+		fmt.Printf("CANNOT PARSE PORT. Got %x with length %d\n",tokens[3], len(tokens[3]))
+		os.Exit(6)
+	}
+	m.Port = port
 }
 func (m *Msg)parseTransaction(tokens ...string){
-	m.data["type"] = tokens[0]
-	m.data["time"] = tokens[1]
-	m.data["id"] = tokens[2]
-	m.data["source"] = tokens[3]
-	m.data["dest"] = tokens[4]
-	m.data["amount"] = tokens[5]
+	m.Type = tokens[0]
+	m.TimeStamp = tokens[1]
+	m.TID = tokens[2]
+	source, err := strconv.Atoi(tokens[3])
+	if err != nil {
+		fmt.Println("CANNOT PARSE SOURCE. Got " + tokens[3])
+		os.Exit(6)
+	}
+	m.Source = source
+	dest, err := strconv.Atoi(tokens[4])
+	if err != nil {
+		fmt.Println("CANNOT PARSE Dest. Got " + tokens[4])
+		os.Exit(6)
+	}
+	m.Dest = dest
+	amount, err := strconv.Atoi(tokens[5])
+	if err != nil {
+		fmt.Println("CANNOT PARSE Amount. Got " + tokens[5])
+		os.Exit(6)
+	}
+	m.Amount = amount
 }
 func (m * Msg)GetName()string{
-	return m.data["name"]
+	return m.Name
 }
 
 func (m * Msg)GetType()string{
-	return m.data["type"]
+	return m.Type
 }
 
 func (m * Msg)GetPort()string{
-	return m.data["port"]
+	return strconv.Itoa(m.Port)
 }
 
 func (m * Msg)GetIp()string{
-	return m.data["ip"]
+	return m.Ip
 }
 func (m * Msg)SetIp(ip string){
-	m.data["ip"] = ip
+	m.Ip = ip
 }
 func (m * Msg)HasIp()bool{
-	_, ok := m.data["ip"]
-	return ok
+	if len(m.Ip) > 0{
+		return true
+	}
+	return false
 }
 func (m * Msg)GetTimestamp()float64{
-	ts, err := strconv.ParseFloat(m.data["timestamp"], 64)
+	ts, err := strconv.ParseFloat(m.TimeStamp, 64)
 	if err != nil {
 		return -1
 	}
 	return ts
 }
 func (m * Msg)GetTID()string{
-	return m.data["id"]
+	return m.TID
 }
 func (m * Msg)GetSource()int{
-	s, err := strconv.Atoi(m.data["source"])
-	if err != nil {
-		return -1
-	}
-	return s
+	return m.Source
 }
 func (m * Msg)GetDest()int{
-	s, err := strconv.Atoi(m.data["dest"])
-	if err != nil {
-		return -1
-	}
-	return s
+	return m.Dest
 }
 func (m * Msg)GetAmount()int{
-	s, err := strconv.Atoi(m.data["amount"])
-	if err != nil {
-		return -1
-	}
-	return s
+	return m.Amount
 }

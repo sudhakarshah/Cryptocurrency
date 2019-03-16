@@ -10,6 +10,7 @@ type Node struct{
 	Ip string
 	Port string
 	LastActive int64
+	Attemps int
 }
 
 
@@ -38,4 +39,11 @@ func (in*Box) pop()(Msg,error){
 	return output, err
 }
 
-
+type Log struct{
+	Time int64
+	Event string // Either send or transmit
+	Type string // type of msg being sent
+	Duration int64
+	MembersCount int
+	TransactionCount int
+}
