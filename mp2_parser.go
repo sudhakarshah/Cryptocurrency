@@ -25,6 +25,9 @@ type Msg struct{
 
 func (m *Msg)Parse(s string){
 	tokens := strings.Split(strings.TrimSpace(s), " ")
+	if len(tokens) < 1{
+		return
+	}
 	m.Type = tokens[0]
 	switch tokens[0] {
 	case "CONNECT":
@@ -37,6 +40,8 @@ func (m *Msg)Parse(s string){
 		m.parseStandard(tokens...)
 	case "JOIN":
 		m.parseStandard(tokens...)
+	case "DIE":
+		return
 	default:
 		fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %s\n", tokens[0])
 	}

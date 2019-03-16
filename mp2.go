@@ -242,6 +242,10 @@ func main(){
 			nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix())}
 			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = nd
 			for k, v := range m.GetFriends(){
+				if len(k) < 5{
+					fmt.Printf("# INIT with friend id with %s\n", k)
+					continue
+				}
 				if _, ok := members[k]; ok{
 					//fmt.Println("Friend Exists")
 					continue
