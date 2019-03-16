@@ -5,7 +5,7 @@ from subprocess import Popen
 intro_port = 9999
 intro_ip = "0.0.0.0"
 rate = 1
-nodes = 100
+nodes = 10
 
 
 commands = []
