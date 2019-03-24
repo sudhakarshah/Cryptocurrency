@@ -3,6 +3,10 @@ package main
 import(
 	"sync"
 	"errors"
+	"net"
+	"encoding/json"
+	"fmt"
+	"time"
 )
 
 type Node struct{
@@ -10,7 +14,58 @@ type Node struct{
 	Ip string
 	Port string
 	LastActive int64
-	Attemps int
+	Attempts int
+	Sock net.Conn
+	jsonEncoder *json.Encoder
+	mux sync.Mutex
+}
+
+func (nd *Node)SendJson(m Msg)int{
+	if nd.jsonEncoder == nil{
+		nd.jsonEncoder = json.NewEncoder(nd.Sock)
+	}
+	startTime := time.Now()
+	if e := nd.jsonEncoder.Encode(m); e != nil {
+		// TODO: json failed to send
+		nd.mux.Lock()
+		if nd.Attempts > 0{
+			nd.mux.Unlock()
+			nd.Sock.Close()
+			return -1
+		}
+		return 1
+	}else{
+		nd.mux.Lock()
+		nd.Attempts = 0
+		nd.mux.Unlock()
+	}
+	b, _ := json.Marshal(m)
+	fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), len(b),  time.Since(startTime)) // time, msg type, size, duration
+	return 0
+}
+
+
+func (nd *Node)ListenToFriend(inbox *Box){
+	dec := json.NewDecoder(nd.Sock)
+	for {
+		var m Msg
+		if err := dec.Decode(&m); err != nil{
+			nd.mux.Lock()
+			nd.Attempts++
+			fmt.Printf("# Listen attempt %d.\n", nd.Attempts)
+			fmt.Printf("# %s\n", err)
+			if nd.Attempts > 5{
+				fmt.Println("# Could not recieve message properly")
+				nd.mux.Unlock()
+				return
+			}
+			nd.mux.Unlock()
+			continue
+		}else{
+			inbox.enqueue(m)
+		}
+		time.Sleep(10)
+	}
 }
 
 

@@ -5,6 +5,7 @@ import(
 	"fmt"
 	"strconv"
 	"os"
+	"net"
 )
 
 
@@ -20,6 +21,7 @@ type Msg struct{
 	TimeStamp string
 	Friends []Node
 	HashTable []Msg
+	Sock net.Conn
 }
 
 
@@ -47,13 +49,17 @@ func (m *Msg)Parse(s string){
 	}
 }
 
-func (m *Msg)FormatPing(friends map[string]Node, s string){
+func (m *Msg)PutSock(conn net.Conn){
+	m.Sock = conn
+}
+
+func (m *Msg)FormatPing(friends map[string]*Node, s string){
 	tokens := strings.Split(strings.TrimSpace(s), " ")
 	m.parseStandard(tokens...)
 	m.Type ="PING"
 	// Convert map to slice
 	for _,v := range friends{
-		m.Friends = append(m.Friends, v)
+		m.Friends = append(m.Friends, *v)
 	}
 }
 
@@ -61,7 +67,9 @@ func (m *Msg)GetFriends()map[string]Node{
 	output := make(map[string]Node)
 	for _, v := range m.Friends{
 		k := fmt.Sprintf("%s:%s:%s",v.Name,v.Ip,v.Port)
-		output[k] = v
+		if len(k) > 5{
+			output[k] = v
+		}
 	}
 	return output
 }
@@ -73,17 +81,17 @@ func (m *Msg)GetHashTable()map[string]Msg{
 	return output
 }
 
-func (m *Msg)FormatInit(friends map[string]Node, hashtable map[string]Msg, s string){
-	tokens := strings.Split(strings.TrimSpace(s), " ")
-	m.parseStandard(tokens...)
-	m.Type = "INIT"
-	// Convert map to slice
+func FormatInit(friends map[string]*Node, hashtable map[string]Msg, s string)[]Msg{
+	var output []Msg
 	for _,v := range friends{
-		m.Friends = append(m.Friends, v)
+		m := Msg{}
+		m.Parse(fmt.Sprintf("INTRODUCE %s %s %s", v.Name, v.Ip, v.Port))
+		output = append(output, m)
 	}
 	for _,v := range hashtable{
-		m.HashTable = append(m.HashTable, v)
+		output = append(output, v)
 	}
+	return output
 }
 
 func (m *Msg)parseStandard(tokens ...string){
@@ -120,6 +128,7 @@ func (m *Msg)parseTransaction(tokens ...string){
 	}
 	m.Amount = amount
 }
+
 func (m * Msg)GetName()string{
 	return m.Name
 }
