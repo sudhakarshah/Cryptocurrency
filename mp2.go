@@ -230,14 +230,14 @@ func main(){
 
 			// Insert transaction
 			hashtable[m.GetTID()] = m
-			fmt.Printf("UPDATE %d %s %d %s\n",int64(time.Now().Unix()), m.GetType(), len(b), m.GetTID() ) // time, msg type, size, member_count, transaction_count
+			fmt.Printf("UPDATE %d %s %s\n",int64(time.Now().Unix()), m.GetType(), m.GetTID() ) // time, msg type, size, member_count, transaction_count
 
 			i := 0
 
 			var removeList []string
 
 			for k, v := range members{
-				if !send && i > 5{
+				if rand.Intn(3) == 0 && i > 3{
 					continue
 				}
 				if v.SendJson(m) != 0 {
@@ -248,9 +248,11 @@ func main(){
 				}
 				send = !send
 			}
-			if rand.Intn(3) == 0 {
+			/*
+			if rand.intn(3) == 0 {
 				send = !send
 			}
+			*/
 			for _, k := range removeList{
 				//fmt.Printf("Removing %s from members\n", k)
 				delete(members, k)

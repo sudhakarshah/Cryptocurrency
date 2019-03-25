@@ -5,7 +5,7 @@ TIMESTAMP = 1
 TYPE = 2
 SIZE = 3
 TRANSMISSION_TIME = 4
-TID = 4
+TID = 3
 MEMBER_SIZE = 4
 HASHTABLE_SIZE = 5
 
@@ -41,6 +41,8 @@ if __name__ == "__main__":
                 stuff[l[TID]] = 1
         print(len(stuff))
     print("Total:%d"%(len(haveFollowing)))
+
+    exit()
     
     # fetch service log
     slog = open("service.log", "r").read().split('\n')
