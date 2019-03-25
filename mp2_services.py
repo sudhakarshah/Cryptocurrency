@@ -51,9 +51,9 @@ async def handle_connection(reader, writer):
                     tx_to = random.randrange(2 ** 20)
                     tx_amount = random.randrange(2 ** 10)
                     tx = f"{tx_time:#.6f} {tx_id} {tx_from} {tx_to} {tx_amount}"
-                    print(f"Sending transaction {tx} to {addr}")
                     writer.write(f"TRANSACTION {tx}\n".encode())
                     await writer.drain()
+                    print(f"Sending transaction {tx} to {addr}")
                 else:
                     if command_task in ready:
                         command = command_task.result()

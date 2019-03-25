@@ -121,6 +121,11 @@ func startListening(inbox * Box, port string){
 
 
 func queueHB(inbox *Box){
+	for{
+		m := Msg{Type:"HB"}
+		time.Sleep(1 * time.Second)
+		inbox.enqueue(m)
+	}
 }
 
 
@@ -154,6 +159,9 @@ func main(){
 	}
 	fmt.Fprintf(conn, connect_string)
 	go queueIntroRequest(&inbox, conn)
+	go queueHB(&inbox)
+	// gossip flipper
+	send := true
 
 	// handle requests
 	for {
@@ -186,6 +194,9 @@ func main(){
 			var nd Node
 
 			nd = Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix()), Sock:conn, Attempts:0}
+			for _, nd := range members{
+				nd.SendJson(m)
+			}
 			// send 
 			if nd.SendJson(join) == 0{
 				members[target_id] = &nd
@@ -193,13 +204,20 @@ func main(){
 			}
 		case "JOIN":
 			// send INTRODUCE and TRANACTION MESSAGES
-			init := FormatInit(members, hashtable, fmt.Sprintf("INIT %s %s %s", name, ip, port))
+			target_id := fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())
+			if _, ok := members[target_id];ok{
+				continue
+			}
+			//init := FormatInit(members, hashtable, len(members))
 			nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix()), Sock:m.Sock, Attempts:0}
 			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = &nd
 			fmt.Printf("# Make %s Join\n", m.GetName())
+			/*
 			for _, m := range init{
 				nd.SendJson(m)
 			}
+			*/
+			fmt.Printf("# End %s Join\n", m.GetName())
 			go nd.ListenToFriend(&inbox)
 
 		case "TRANSACTION":
@@ -212,21 +230,26 @@ func main(){
 
 			// Insert transaction
 			hashtable[m.GetTID()] = m
+			fmt.Printf("UPDATE %d %s %d %s\n",int64(time.Now().Unix()), m.GetType(), len(b), m.GetTID() ) // time, msg type, size, member_count, transaction_count
 
 			i := 0
 
 			var removeList []string
 
 			for k, v := range members{
-				coin := rand.Intn(1)
-				if coin < 1 && i > 3{
+				if !send && i > 5{
 					continue
 				}
 				if v.SendJson(m) != 0 {
 					fmt.Printf("# Could not send message to %s\n", v.Name)
 					removeList = append(removeList, k)
+				}else{
+					i += 1
 				}
-				i += 1
+				send = !send
+			}
+			if rand.Intn(3) == 0 {
+				send = !send
 			}
 			for _, k := range removeList{
 				//fmt.Printf("Removing %s from members\n", k)
@@ -237,8 +260,9 @@ func main(){
 		case "QUIT":
 			quit := Msg{}
 			quit.Parse(fmt.Sprintf("LEAVE %s %s %s", name, ip, port))
-			// dump everything before ending
-			init := FormatInit(members, hashtable, fmt.Sprintf("INIT %s %s %s", name, ip, port))
+			// Dump every remaining message to all members
+			/*
+			init := FormatInit(members, hashtable, 1)
 			// Send leave message to everyone
 			for _, nd := range members{
 				for _, m := range init{
@@ -246,6 +270,7 @@ func main(){
 				}
 				nd.SendJson(quit)
 			}
+			*/
 			os.Exit(3)
 		case "LEAVE":
 			key := fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())

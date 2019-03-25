@@ -6,6 +6,8 @@ import(
 	"strconv"
 	"os"
 	"net"
+	"math"
+	_"math/rand"
 )
 
 
@@ -81,15 +83,19 @@ func (m *Msg)GetHashTable()map[string]Msg{
 	return output
 }
 
-func FormatInit(friends map[string]*Node, hashtable map[string]Msg, s string)[]Msg{
+func FormatInit(friends map[string]*Node, hashtable map[string]Msg, fc int)[]Msg{
 	var output []Msg
 	for _,v := range friends{
 		m := Msg{}
 		m.Parse(fmt.Sprintf("INTRODUCE %s %s %s", v.Name, v.Ip, v.Port))
 		output = append(output, m)
 	}
+	chance := int(math.Ceil(float64(fc)/2.0))
+	if chance == 0{chance = 1}
 	for _,v := range hashtable{
-		output = append(output, v)
+		//if rand.Intn(chance) == 0 {
+			output = append(output, v)
+		//}
 	}
 	return output
 }

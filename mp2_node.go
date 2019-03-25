@@ -28,7 +28,7 @@ func (nd *Node)SendJson(m Msg)int{
 	if e := nd.jsonEncoder.Encode(m); e != nil {
 		// TODO: json failed to send
 		nd.mux.Lock()
-		if nd.Attempts > 0{
+		if nd.Attempts > 2{
 			nd.mux.Unlock()
 			nd.Sock.Close()
 			return -1
@@ -54,9 +54,10 @@ func (nd *Node)ListenToFriend(inbox *Box){
 			nd.Attempts++
 			fmt.Printf("# Listen attempt %d.\n", nd.Attempts)
 			fmt.Printf("# %s\n", err)
-			if nd.Attempts > 5{
+			if nd.Attempts > 2{
 				fmt.Println("# Could not recieve message properly")
 				nd.mux.Unlock()
+				nd.Sock.Close()
 				return
 			}
 			nd.mux.Unlock()
