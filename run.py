@@ -9,7 +9,7 @@ rate = 20
 nodes = 10
 
 prefix = ""
-if len(sys.argv) == 2:
+if len(sys.argv) < 2:
     prefix = sys.argv[1]
 else:
     print("Need an argument $(LOG_PREFIX)")
