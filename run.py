@@ -13,6 +13,8 @@ if len(sys.argv) == 2:
     prefix = sys.argv[1]
 else:
     print("Need an argument $(LOG_PREFIX)")
+if len(sys.argv) == 3:
+    intro_ip = "sp19-cs425-g62-01.cs.illinois.edu"
 
 commands = []
 dir_path = os.path.dirname(os.path.realpath(__file__))
