@@ -129,7 +129,7 @@ func startListening(inbox * Box, port string){
 func queueHB(inbox *Box){
 	for{
 		m := Msg{Type:"HB", Data:"HB\n"}
-		time.Sleep(1 * time.Second)
+		time.Sleep(3 * time.Second)
 		inbox.enqueue(m)
 	}
 }
