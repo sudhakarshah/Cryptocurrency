@@ -57,7 +57,6 @@ func (nd *Node)ListenToFriend(inbox *Box){
 		if len(s) > 0{
 			var m Msg
 			m.Parse(s)
-			fmt.Printf("#")
 			inbox.enqueue(m)
 		}
 	}
