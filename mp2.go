@@ -221,7 +221,7 @@ func main(){
 			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = &nd
 			for _, msg := range init{
 				if msg.GetType() == "INTRODUCE"{
-					if rand.Intn(5) == 0{
+					if rand.Intn(3) == 0{
 						nd.SendJson(msg)
 					}
 				}
