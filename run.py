@@ -6,7 +6,8 @@ from subprocess import Popen
 intro_port = 9999
 intro_ip = "0.0.0.0"
 rate = 20
-nodes = 25
+nodes = 20
+
 
 prefix = ""
 if len(sys.argv) >= 2:
