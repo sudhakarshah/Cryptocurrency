@@ -45,6 +45,7 @@ func (nd *Node)SendJson(m Msg)int{
 	}else {
 		fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime)) // time, msg type, size, duration
 	}
+	time.Sleep(1 * time.Millisecond)
 	return 0
 }
 
