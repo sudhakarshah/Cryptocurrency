@@ -40,7 +40,11 @@ func (nd *Node)SendJson(m Msg)int{
 		nd.Attempts = 0
 		nd.mux.Unlock()
 	}
-	fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime)) // time, msg type, size, duration
+	if m.Type == "TRANSACTION"{
+		fmt.Printf("SEND %d %s %d %d %s\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime), m.GetTID()) // time, msg type, size, duration
+	}else {
+		fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime)) // time, msg type, size, duration
+	}
 	return 0
 }
 
