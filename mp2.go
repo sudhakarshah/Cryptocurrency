@@ -7,7 +7,7 @@ import (
 	"errors"
 	"time"
 	_"encoding/json"
-	_"math/rand"
+	"math/rand"
 	"strings"
 	"bufio"
 )
@@ -242,8 +242,8 @@ func main(){
 			var removeList []string
 
 			for k, v := range members{
-				if i > 5{
-					break
+				if i > 10 || rand.Intn(4) == 0{
+					continue
 				}
 				if v.SendJson(m) != 0 {
 					fmt.Printf("# Could not send message to %s\n", v.Name)

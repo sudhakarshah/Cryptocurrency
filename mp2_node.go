@@ -46,9 +46,9 @@ func (nd *Node)SendJson(m Msg)int{
 
 
 func (nd *Node)ListenToFriend(inbox *Box){
-	reader := bufio.NewReader(nd.Sock)
+	//reader := bufio.NewReader(nd.Sock)
 	for {
-		s, err := reader.ReadString('\n')
+		s, err := bufio.NewReader(nd.Sock).ReadString('\n')
 		//fmt.Printf("# Recieved %s from %s\n", s, nd.Name)
 		time.Sleep(1 * time.Millisecond)
 		if err != nil {
