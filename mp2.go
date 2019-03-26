@@ -237,19 +237,16 @@ func main(){
 			hashtable[m.GetTID()] = m
 			fmt.Printf("UPDATE %d %s %s\n",int64(time.Now().Unix()), m.GetType(), m.GetTID() ) // time, msg type, size, member_count, transaction_count
 
-			i := 0
 
 			var removeList []string
 
 			for k, v := range members{
-				if i > 10 || rand.Intn(4) == 0{
+				if rand.Intn(3) != 0{
 					continue
 				}
 				if v.SendJson(m) != 0 {
 					fmt.Printf("# Could not send message to %s\n", v.Name)
 					removeList = append(removeList, k)
-				}else{
-					i += 1
 				}
 			}
 			for _, k := range removeList{
