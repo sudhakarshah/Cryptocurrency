@@ -1,0 +1,742 @@
+RECIEVED 1553584398 INTRODUCE 168 0 0
+SEND 1553584398 JOIN 163 30288
+RECIEVED 1553584398 JOIN 162 1 0
+# Make node11 Join
+# End node11 Join
+RECIEVED 1553584399 HB 139 2 0
+SEND 1553584399 PING 361 32999
+SEND 1553584399 PING 361 21215
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584400 HB 139 2 0
+SEND 1553584400 PING 361 31024
+SEND 1553584400 PING 361 24968
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584401 HB 139 2 0
+SEND 1553584401 PING 361 27075
+SEND 1553584401 PING 361 18077
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584402 HB 139 2 0
+SEND 1553584402 PING 361 36725
+SEND 1553584402 PING 361 29526
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584403 HB 139 2 0
+SEND 1553584403 PING 361 30830
+SEND 1553584403 PING 361 29947
+RECIEVED 1553584404 HB 139 2 0
+SEND 1553584404 PING 361 43483
+SEND 1553584404 PING 361 34140
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+# Listen attempt 2.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584405 HB 139 2 0
+SEND 1553584405 PING 361 39930
+SEND 1553584405 PING 361 28641
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584406 HB 139 2 0
+SEND 1553584406 PING 361 38257
+SEND 1553584406 PING 361 30811
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584407 HB 139 2 0
+SEND 1553584407 PING 361 36551
+SEND 1553584407 PING 361 29573
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584408 HB 139 2 0
+SEND 1553584408 PING 361 25905
+SEND 1553584408 PING 361 31061
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584409 HB 139 2 0
+SEND 1553584409 PING 361 36433
+SEND 1553584409 PING 361 33971
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584410 HB 139 2 0
+SEND 1553584410 PING 361 36740
+SEND 1553584410 PING 361 34268
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584411 HB 139 2 0
+SEND 1553584411 PING 361 31940
+SEND 1553584411 PING 361 34624
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584412 HB 139 2 0
+SEND 1553584412 PING 361 25126
+SEND 1553584412 PING 361 35317
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584413 HB 139 2 0
+SEND 1553584413 PING 361 31917
+SEND 1553584413 PING 361 21456
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584414 HB 139 2 0
+SEND 1553584414 PING 361 70818
+SEND 1553584414 PING 361 32112
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584415 HB 139 2 0
+SEND 1553584415 PING 361 58269
+SEND 1553584415 PING 361 46787
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584416 HB 139 2 0
+SEND 1553584416 PING 361 64616
+SEND 1553584416 PING 361 32833
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584417 HB 139 2 0
+SEND 1553584417 PING 361 67899
+SEND 1553584417 PING 361 33073
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584418 HB 139 2 0
+SEND 1553584418 PING 361 65980
+SEND 1553584418 PING 361 39168
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584419 HB 139 2 0
+SEND 1553584419 PING 361 74323
+SEND 1553584419 PING 361 33101
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584420 HB 139 2 0
+SEND 1553584420 PING 361 50645
+SEND 1553584420 PING 361 29439
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584421 HB 139 2 0
+SEND 1553584421 PING 361 37751
+SEND 1553584421 PING 361 25266
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584422 HB 139 2 0
+SEND 1553584422 PING 361 36669
+SEND 1553584422 PING 361 29520
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584423 HB 139 2 0
+SEND 1553584423 PING 361 38873
+SEND 1553584423 PING 361 26358
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584424 HB 139 2 0
+SEND 1553584424 PING 361 50849
+SEND 1553584424 PING 361 28002
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584425 HB 139 2 0
+SEND 1553584425 PING 361 59769
+SEND 1553584425 PING 361 29515
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584426 HB 139 2 0
+SEND 1553584426 PING 361 41814
+SEND 1553584426 PING 361 22351
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584427 HB 139 2 0
+SEND 1553584427 PING 361 31593
+SEND 1553584427 PING 361 30286
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584428 HB 139 2 0
+SEND 1553584428 PING 361 31741
+SEND 1553584428 PING 361 30462
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584429 HB 139 2 0
+SEND 1553584429 PING 361 33173
+SEND 1553584429 PING 361 22075
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584431 HB 139 2 0
+SEND 1553584431 PING 361 57099
+SEND 1553584431 PING 361 35969
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584432 HB 139 2 0
+SEND 1553584432 PING 361 57059
+SEND 1553584432 PING 361 28073
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584433 HB 139 2 0
+SEND 1553584433 PING 361 58162
+SEND 1553584433 PING 361 27915
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584434 HB 139 2 0
+SEND 1553584434 PING 361 67450
+SEND 1553584434 PING 361 29720
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584435 HB 139 2 0
+SEND 1553584435 PING 361 56832
+SEND 1553584435 PING 361 27882
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584436 HB 139 2 0
+SEND 1553584436 PING 361 62069
+SEND 1553584436 PING 361 28661
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584437 HB 139 2 0
+SEND 1553584437 PING 361 55507
+SEND 1553584437 PING 361 28448
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584438 HB 139 2 0
+SEND 1553584438 PING 361 61964
+SEND 1553584438 PING 361 27281
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584439 HB 139 2 0
+SEND 1553584439 PING 361 58526
+SEND 1553584439 PING 361 27303
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584440 HB 139 2 0
+SEND 1553584440 PING 361 59075
+SEND 1553584440 PING 361 28644
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584441 HB 139 2 0
+SEND 1553584441 PING 361 57270
+SEND 1553584441 PING 361 28324
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584442 HB 139 2 0
+SEND 1553584442 PING 361 72337
+SEND 1553584442 PING 361 29186
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584443 HB 139 2 0
+SEND 1553584443 PING 361 53134
+SEND 1553584443 PING 361 27047
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584444 HB 139 2 0
+SEND 1553584444 PING 361 35090
+SEND 1553584444 PING 361 31948
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+# Listen attempt 2.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584445 HB 139 2 0
+SEND 1553584445 PING 361 50616
+SEND 1553584445 PING 361 18609
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584446 HB 139 2 0
+SEND 1553584446 PING 361 49819
+SEND 1553584446 PING 361 21727
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584447 HB 139 2 0
+SEND 1553584447 PING 361 51849
+SEND 1553584447 PING 361 23027
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584448 HB 139 2 0
+SEND 1553584448 PING 361 53111
+SEND 1553584448 PING 361 24812
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584449 HB 139 2 0
+SEND 1553584449 PING 361 42166
+SEND 1553584449 PING 361 31697
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584450 HB 139 2 0
+SEND 1553584450 PING 361 58680
+SEND 1553584450 PING 361 31528
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584451 HB 139 2 0
+SEND 1553584451 PING 361 56762
+SEND 1553584451 PING 361 31897
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584452 HB 139 2 0
+SEND 1553584452 PING 361 50854
+SEND 1553584452 PING 361 45689
+RECIEVED 1553584453 HB 139 2 0
+SEND 1553584453 PING 361 62270
+SEND 1553584453 PING 361 40741
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584454 HB 139 2 0
+SEND 1553584454 PING 361 62719
+SEND 1553584454 PING 361 33237
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+# Listen attempt 2.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584456 HB 139 2 0
+SEND 1553584456 PING 361 59725
+SEND 1553584456 PING 361 32417
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584457 HB 139 2 0
+SEND 1553584457 PING 361 57582
+SEND 1553584457 PING 361 32496
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584458 HB 139 2 0
+SEND 1553584458 PING 361 55981
+SEND 1553584458 PING 361 32647
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584459 HB 139 2 0
+SEND 1553584459 PING 361 60968
+SEND 1553584459 PING 361 44819
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584460 HB 139 2 0
+SEND 1553584460 PING 361 69663
+SEND 1553584460 PING 361 34247
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584461 HB 139 2 0
+SEND 1553584461 PING 361 65385
+SEND 1553584461 PING 361 48831
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584462 HB 139 2 0
+SEND 1553584462 PING 361 65446
+SEND 1553584462 PING 361 47046
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584463 HB 139 2 0
+SEND 1553584463 PING 361 70090
+SEND 1553584463 PING 361 35611
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584464 HB 139 2 0
+SEND 1553584464 PING 361 79835
+SEND 1553584464 PING 361 34484
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584465 HB 139 2 0
+SEND 1553584465 PING 361 51795
+SEND 1553584465 PING 361 34490
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584466 HB 139 2 0
+SEND 1553584466 PING 361 51145
+SEND 1553584466 PING 361 36182
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584467 HB 139 2 0
+SEND 1553584467 PING 361 63422
+SEND 1553584467 PING 361 33653
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584468 HB 139 2 0
+SEND 1553584468 PING 361 68166
+SEND 1553584468 PING 361 33074
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584469 HB 139 2 0
+SEND 1553584469 PING 361 68430
+SEND 1553584469 PING 361 34863
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584470 HB 139 2 0
+SEND 1553584470 PING 361 78795
+SEND 1553584470 PING 361 33832
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584471 HB 139 2 0
+SEND 1553584471 PING 361 65989
+SEND 1553584471 PING 361 33413
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584472 HB 139 2 0
+SEND 1553584472 PING 361 65134
+SEND 1553584472 PING 361 33887
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584473 HB 139 2 0
+SEND 1553584473 PING 361 68561
+SEND 1553584473 PING 361 33651
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584474 HB 139 2 0
+SEND 1553584474 PING 361 61718
+SEND 1553584474 PING 361 34080
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584475 HB 139 2 0
+SEND 1553584475 PING 361 62594
+SEND 1553584475 PING 361 33912
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584476 HB 139 2 0
+SEND 1553584476 PING 361 67348
+SEND 1553584476 PING 361 34554
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584477 HB 139 2 0
+SEND 1553584477 PING 361 67318
+SEND 1553584477 PING 361 34801
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584478 HB 139 2 0
+SEND 1553584478 PING 361 74289
+SEND 1553584478 PING 361 33503
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584479 HB 139 2 0
+SEND 1553584479 PING 361 53472
+SEND 1553584479 PING 361 34423
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584480 HB 139 2 0
+SEND 1553584480 PING 361 66692
+SEND 1553584480 PING 361 34091
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584481 HB 139 2 0
+SEND 1553584481 PING 361 54013
+SEND 1553584481 PING 361 53460
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584482 HB 139 2 0
+SEND 1553584482 PING 361 58615
+SEND 1553584482 PING 361 33616
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584483 HB 139 2 0
+SEND 1553584483 PING 361 66435
+SEND 1553584483 PING 361 35048
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584484 HB 139 2 0
+SEND 1553584484 PING 361 69911
+SEND 1553584484 PING 361 35028
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584485 HB 139 2 0
+SEND 1553584485 PING 361 66565
+SEND 1553584485 PING 361 34693
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584486 HB 139 2 0
+SEND 1553584486 PING 361 68476
+SEND 1553584486 PING 361 34858
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584487 HB 139 2 0
+SEND 1553584487 PING 361 69066
+SEND 1553584487 PING 361 37447
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584488 HB 139 2 0
+SEND 1553584488 PING 361 65543
+SEND 1553584488 PING 361 33470
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584489 HB 139 2 0
+SEND 1553584489 PING 361 56609
+SEND 1553584489 PING 361 35588
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584490 HB 139 2 0
+SEND 1553584490 PING 361 58998
+SEND 1553584490 PING 361 34054
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584491 HB 139 2 0
+SEND 1553584491 PING 361 72669
+SEND 1553584491 PING 361 35037
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584492 HB 139 2 0
+SEND 1553584492 PING 361 76597
+SEND 1553584492 PING 361 33442
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584493 HB 139 2 0
+SEND 1553584493 PING 361 52869
+SEND 1553584493 PING 361 38722
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584494 HB 139 2 0
+SEND 1553584494 PING 361 60279
+SEND 1553584494 PING 361 29398
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584495 HB 139 2 0
+SEND 1553584495 PING 361 75400
+SEND 1553584495 PING 361 28790
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584496 HB 139 2 0
+SEND 1553584496 PING 361 48160
+SEND 1553584496 PING 361 36146
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584497 HB 139 2 0
+SEND 1553584497 PING 361 48598
+SEND 1553584497 PING 361 35522
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584498 HB 139 2 0
+SEND 1553584498 PING 361 65494
+SEND 1553584498 PING 361 37948
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584499 HB 139 2 0
+SEND 1553584499 PING 361 56136
+SEND 1553584499 PING 361 29318
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584500 HB 139 2 0
+SEND 1553584500 PING 361 68225
+SEND 1553584500 PING 361 28010
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584501 HB 139 2 0
+SEND 1553584501 PING 361 50779
+SEND 1553584501 PING 361 36548
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584502 HB 139 2 0
+SEND 1553584502 PING 361 66181
+SEND 1553584502 PING 361 33586
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584503 HB 139 2 0
+SEND 1553584503 PING 361 64178
+SEND 1553584503 PING 361 27863
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584504 HB 139 2 0
+SEND 1553584504 PING 361 72421
+SEND 1553584504 PING 361 30009
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584505 HB 139 2 0
+SEND 1553584505 PING 361 70439
+SEND 1553584505 PING 361 27866
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584506 HB 139 2 0
+SEND 1553584506 PING 361 66488
+SEND 1553584506 PING 361 39345
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584507 HB 139 2 0
+SEND 1553584507 PING 361 70816
+SEND 1553584507 PING 361 29721
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584508 HB 139 2 0
+SEND 1553584508 PING 361 67965
+SEND 1553584508 PING 361 28569
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584509 HB 139 2 0
+SEND 1553584509 PING 361 51268
+SEND 1553584509 PING 361 27803
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584510 HB 139 2 0
+SEND 1553584510 PING 361 61965
+SEND 1553584510 PING 361 28319
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584511 HB 139 2 0
+SEND 1553584511 PING 361 69991
+SEND 1553584511 PING 361 28040
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584512 HB 139 2 0
+SEND 1553584512 PING 361 69977
+SEND 1553584512 PING 361 28669
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584513 HB 139 2 0
+SEND 1553584513 PING 361 56008
+SEND 1553584513 PING 361 35232
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584514 HB 139 2 0
+SEND 1553584514 PING 361 63290
+SEND 1553584514 PING 361 28855
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584515 HB 139 2 0
+SEND 1553584515 PING 361 64586
+SEND 1553584515 PING 361 29615
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584516 HB 139 2 0
+SEND 1553584516 PING 361 65898
+SEND 1553584516 PING 361 27935
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584517 HB 139 2 0
+SEND 1553584517 PING 361 54511
+SEND 1553584517 PING 361 32059
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584518 HB 139 2 0
+SEND 1553584518 PING 361 57374
+SEND 1553584518 PING 361 28142
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584519 HB 139 2 0
+SEND 1553584519 PING 361 55065
+SEND 1553584519 PING 361 29178
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584520 HB 139 2 0
+SEND 1553584520 PING 361 52984
+SEND 1553584520 PING 361 35263
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584521 HB 139 2 0
+SEND 1553584521 PING 361 70762
+SEND 1553584521 PING 361 28942
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584522 HB 139 2 0
+SEND 1553584522 PING 361 72115
+SEND 1553584522 PING 361 28331
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584523 HB 139 2 0
+SEND 1553584523 PING 361 72740
+SEND 1553584523 PING 361 32830
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584524 HB 139 2 0
+SEND 1553584524 PING 361 81976
+SEND 1553584524 PING 361 28846
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584525 HB 139 2 0
+SEND 1553584525 PING 361 51275
+SEND 1553584525 PING 361 35843
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+# Listen attempt 1.
+# read tcp 172.22.156.207:59810->172.22.156.206:8004: read: connection reset by peer
+# Listen attempt 2.
+# read tcp 172.22.156.207:59810->172.22.156.206:8004: read: connection reset by peer
+# Listen attempt 3.
+# read tcp 172.22.156.207:59810->172.22.156.206:8004: read: connection reset by peer
+# Could not recieve message properly
+RECIEVED 1553584526 HB 139 2 0
+SEND 1553584526 PING 361 42188
+# Removing node4:172.22.156.206:8004 from members
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584527 HB 139 1 0
+SEND 1553584527 PING 261 43091
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584528 HB 139 1 0
+SEND 1553584528 PING 261 43640
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584529 HB 139 1 0
+SEND 1553584529 PING 261 43951
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584530 HB 139 1 0
+SEND 1553584530 PING 261 44986
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584531 HB 139 1 0
+SEND 1553584531 PING 261 64295
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584532 HB 139 1 0
+SEND 1553584532 PING 261 51210
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584533 HB 139 1 0
+SEND 1553584533 PING 261 51489
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584534 HB 139 1 0
+SEND 1553584534 PING 261 51100
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584535 HB 139 1 0
+SEND 1553584535 PING 261 44526
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584536 HB 139 1 0
+SEND 1553584536 PING 261 46582
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584537 HB 139 1 0
+SEND 1553584537 PING 261 57625
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584538 HB 139 1 0
+SEND 1553584538 PING 261 50265
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584539 HB 139 1 0
+SEND 1553584539 PING 261 54893
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584540 HB 139 1 0
+SEND 1553584540 PING 261 56840
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584541 HB 139 1 0
+SEND 1553584541 PING 261 50101
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584542 HB 139 1 0
+SEND 1553584542 PING 261 49288
+RECIEVED 1553584543 HB 139 1 0
+SEND 1553584543 PING 261 54566
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584544 HB 139 1 0
+SEND 1553584544 PING 261 56289
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584545 HB 139 1 0
+SEND 1553584545 PING 261 51011
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584546 HB 139 1 0
+SEND 1553584546 PING 261 55482
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584547 HB 139 1 0
+SEND 1553584547 PING 261 60286
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584548 HB 139 1 0
+SEND 1553584548 PING 261 52276
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584549 HB 139 1 0
+SEND 1553584549 PING 261 72186
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584550 HB 139 1 0
+SEND 1553584550 PING 261 49984
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
+RECIEVED 1553584551 HB 139 1 0
+SEND 1553584551 PING 261 57969
+# Listen attempt 1.
+# json: cannot unmarshal object into Go struct field Node.Sock of type net.Conn
