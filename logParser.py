@@ -56,7 +56,3 @@ if __name__ == "__main__":
         if l[1] == "transaction":
             hashtable[l[3]] = 1
     print(len(hashtable))
-
-
-    
-

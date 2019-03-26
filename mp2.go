@@ -6,7 +6,7 @@ import (
 	"os"
 	"errors"
 	"time"
-	"encoding/json"
+	_"encoding/json"
 	"math/rand"
 	"strings"
 	"bufio"
@@ -69,11 +69,15 @@ func getRequest(conn net.Conn)string {
 }
 
 func queueIntroRequest(inbox *Box, conn net.Conn){
+	reader := bufio.NewReader(conn)
 	for {
-		s := strings.TrimRight(getRequest(conn), "\n")
-		if len(s) > 0{
+		s, _ := reader.ReadString('\n')
+		//fmt.Printf("# Recieved %d from intro\n", len(s))
+		if len(s) > 2{
 			m := Msg{}
-			m.Parse(s)
+			if m.Parse(s) < 0{
+				continue
+			}
 			inbox.enqueue(m)
 			time.Sleep(10)
 		}
@@ -90,12 +94,14 @@ func printDebug(s string){
 // TODO: Recieve Message and close connection
 func listener(inbox * Box, in_con net.Conn){
 	var m Msg
-	dec := json.NewDecoder(in_con)
-	if err := dec.Decode(&m); err != nil{
+	s, err := bufio.NewReader(in_con).ReadString('\n')
+	fmt.Printf("# recieved string %s\n", s)
+	if err != nil{
+		fmt.Println("Error in listening")
 		// Something went wrong
 		return
 	}
-	//fmt.Printf("Recieved %s\n", m.GetType())
+	m.Parse(s)
 	m.PutSock(in_con)
 	inbox.enqueue(m)
 }
@@ -122,7 +128,7 @@ func startListening(inbox * Box, port string){
 
 func queueHB(inbox *Box){
 	for{
-		m := Msg{Type:"HB"}
+		m := Msg{Type:"HB", Data:"HB\n"}
 		time.Sleep(1 * time.Second)
 		inbox.enqueue(m)
 	}
@@ -170,18 +176,18 @@ func main(){
 			time.Sleep(10)
 			continue
 		}
-		b, _ := json.Marshal(m)
-		fmt.Printf("RECIEVED %d %s %d %d %d\n",int64(time.Now().Unix()), m.GetType(), len(b), len(members), len(hashtable) ) // time, msg type, size, member_count, transaction_count
+		fmt.Printf("RECIEVED %d %s %d %d %d\n",int64(time.Now().Unix()), m.GetType(), len(m.Data), len(members), len(hashtable) )
 		//fmt.Printf("Members Count: %d\nTransaction Count: %d\n", len(members), len(hashtable))
 		switch m.GetType() {
 		case "INTRODUCE":
 			target_id := fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())
-			if _, ok := members[target_id];ok{
+			my_id := fmt.Sprintf("%s:%s:%s",name,ip,port)
+			if _, ok := members[target_id];ok || target_id == my_id {
 				continue
 			}
 			// send JOIN MESSAGE then INIT message
 			join := Msg{}
-			join.Parse(fmt.Sprintf("JOIN %s %s %s", name, ip, port))
+			join.Parse(fmt.Sprintf("JOIN %s %s %s\n", name, ip, port))
 
 			//fmt.Printf("Sending %s to port %d\n", m.GetType(), len(port))
 			conn, err := net.Dial("tcp", m.GetIp()+":"+m.GetPort())
@@ -210,15 +216,8 @@ func main(){
 			}
 			//init := FormatInit(members, hashtable, len(members))
 			nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix()), Sock:m.Sock, Attempts:0}
-			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = &nd
-			fmt.Printf("# Make %s Join\n", m.GetName())
-			/*
-			for _, m := range init{
-				nd.SendJson(m)
-			}
-			*/
-			fmt.Printf("# End %s Join\n", m.GetName())
 			go nd.ListenToFriend(&inbox)
+			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = &nd
 
 		case "TRANSACTION":
 			// check if the transaction exists if so, continue
@@ -248,11 +247,6 @@ func main(){
 				}
 				send = !send
 			}
-			/*
-			if rand.intn(3) == 0 {
-				send = !send
-			}
-			*/
 			for _, k := range removeList{
 				//fmt.Printf("Removing %s from members\n", k)
 				delete(members, k)
@@ -261,18 +255,8 @@ func main(){
 			os.Exit(3)
 		case "QUIT":
 			quit := Msg{}
-			quit.Parse(fmt.Sprintf("LEAVE %s %s %s", name, ip, port))
+			quit.Parse(fmt.Sprintf("LEAVE %s %s %s\n", name, ip, port))
 			// Dump every remaining message to all members
-			/*
-			init := FormatInit(members, hashtable, 1)
-			// Send leave message to everyone
-			for _, nd := range members{
-				for _, m := range init{
-					nd.SendJson(m)
-				}
-				nd.SendJson(quit)
-			}
-			*/
 			os.Exit(3)
 		case "LEAVE":
 			key := fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())
@@ -281,44 +265,21 @@ func main(){
 			}
 			delete(members, key)
 			// If so, then forward the message to others
-			/*
-			for _, nd := range members{
-				sendJson(nd.Ip, nd.Port, m)
-			}
-			*/
-		case  "PING":
-			senderId := fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())
-			// update the last active 
-			sender := members[senderId]
-			sender.LastActive = int64(time.Now().Unix())
-			members[senderId] = sender
-			pf := m.GetFriends()
-			//fmt.Printf("Received ping with friend list length of %d\n", len(pf) )
-			for k, v := range pf {
-				if v.Ip == ip && v.Port == port {
-					continue
-				}
-				if _, ok := members[k]; ok {
-					continue
-				}
-				intro := Msg{}
-				introString := fmt.Sprintf("INTRODUCE %s %s %s\n", v.Name, v.Ip, v.Port)
-				intro.Parse(introString)
-				inbox.enqueue(intro)
-			}
 		case "HB":
-			ping := Msg{}
-			ping.FormatPing(members, fmt.Sprintf("PING %s %s %s\n", name, ip, port))
+			// Array of introduce
+			ping := FormatPing(members)
 			var removeList []string
 			// Ping everyone in the contacts
 			for k, v := range members{
 				if v.Ip == ip && v.Port == port {
 					continue
 				}
-				if v.SendJson(ping) != 0 {
-					removeList = append(removeList, k)
-				}else{
-					//fmt.Printf("Pinged %s\n", k)
+				for _, p := range ping{
+					if v.SendJson(p) != 0 {
+						removeList = append(removeList, k)
+					}else{
+						//fmt.Printf("Pinged %s\n", k)
+					}
 				}
 			}
 			// If ping failed, remove from the contacts

@@ -7,6 +7,7 @@ import(
 	"encoding/json"
 	"fmt"
 	"time"
+	"bufio"
 )
 
 type Node struct{
@@ -21,11 +22,9 @@ type Node struct{
 }
 
 func (nd *Node)SendJson(m Msg)int{
-	if nd.jsonEncoder == nil{
-		nd.jsonEncoder = json.NewEncoder(nd.Sock)
-	}
 	startTime := time.Now()
-	if e := nd.jsonEncoder.Encode(m); e != nil {
+	b, err := fmt.Fprintf(nd.Sock, m.Data)
+	if err != nil {
 		// TODO: json failed to send
 		nd.mux.Lock()
 		if nd.Attempts > 2{
@@ -39,33 +38,28 @@ func (nd *Node)SendJson(m Msg)int{
 		nd.Attempts = 0
 		nd.mux.Unlock()
 	}
-	b, _ := json.Marshal(m)
-	fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), len(b),  time.Since(startTime)) // time, msg type, size, duration
+	fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime)) // time, msg type, size, duration
 	return 0
 }
 
 
 func (nd *Node)ListenToFriend(inbox *Box){
-	dec := json.NewDecoder(nd.Sock)
+	reader := bufio.NewReader(nd.Sock)
 	for {
-		var m Msg
-		if err := dec.Decode(&m); err != nil{
-			nd.mux.Lock()
-			nd.Attempts++
-			fmt.Printf("# Listen attempt %d.\n", nd.Attempts)
-			fmt.Printf("# %s\n", err)
-			if nd.Attempts > 2{
-				fmt.Println("# Could not recieve message properly")
-				nd.mux.Unlock()
-				nd.Sock.Close()
-				return
-			}
-			nd.mux.Unlock()
-			continue
-		}else{
+		s, err := reader.ReadString('\n')
+		//fmt.Printf("# Recieved %s from %s\n", s, nd.Name)
+		time.Sleep(1 * time.Millisecond)
+		if err != nil {
+			// fmt.Printf("# Failed listening to node %s\n", nd.Name)
+			// fmt.Printf("# ERROR: %s\n", err)
+			return
+		}
+		if len(s) > 0{
+			var m Msg
+			m.Parse(s)
+			fmt.Printf("#")
 			inbox.enqueue(m)
 		}
-		time.Sleep(10)
 	}
 }
 
@@ -83,13 +77,15 @@ func (in*Box) enqueue(m Msg){
 
 func (in*Box) pop()(Msg,error){
 	var output Msg
-	var err error = nil
+	var err error
 	in.mux.Lock()
 	if len(in.messages) != 0{
 		output = in.messages[0]
-		in.messages = in.messages[1:]
+		in.messages = append(in.messages[:0], in.messages[1:]...)
 	} else {
 		err = errors.New("The inbox is empty")
+		in.mux.Unlock()
+		return output, err
 	}
 	in.mux.Unlock()
 	return output, err

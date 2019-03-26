@@ -24,13 +24,15 @@ type Msg struct{
 	Friends []Node
 	HashTable []Msg
 	Sock net.Conn
+	Data string
 }
 
 
-func (m *Msg)Parse(s string){
+func (m *Msg)Parse(s string)int{
+	m.Data = s
 	tokens := strings.Split(strings.TrimSpace(s), " ")
-	if len(tokens) < 1{
-		return
+	if len(tokens) < 1 || len(s) < 1{
+		return -1
 	}
 	m.Type = tokens[0]
 	switch tokens[0] {
@@ -45,49 +47,35 @@ func (m *Msg)Parse(s string){
 	case "JOIN":
 		m.parseStandard(tokens...)
 	case "DIE":
-		return
+		return 1
 	default:
-		fmt.Printf("CANNOT PARSE MESSAGE. RECIEVED %s\n", tokens[0])
+		fmt.Printf("CANNOT PARSE STRING. RECIEVED %s\n", tokens[0])
+		return -1
 	}
+	return 1
 }
 
 func (m *Msg)PutSock(conn net.Conn){
 	m.Sock = conn
 }
 
-func (m *Msg)FormatPing(friends map[string]*Node, s string){
-	tokens := strings.Split(strings.TrimSpace(s), " ")
-	m.parseStandard(tokens...)
-	m.Type ="PING"
-	// Convert map to slice
+// creates a ping then sequence of introduce messages
+func FormatPing(friends map[string]*Node)[]Msg{
+	var output []Msg
 	for _,v := range friends{
-		m.Friends = append(m.Friends, *v)
+		m := Msg{}
+		m.Parse(fmt.Sprintf("INTRODUCE %s %s %s\n", v.Name, v.Ip, v.Port))
+		output = append(output, m)
 	}
+	return output
 }
 
-func (m *Msg)GetFriends()map[string]Node{
-	output := make(map[string]Node)
-	for _, v := range m.Friends{
-		k := fmt.Sprintf("%s:%s:%s",v.Name,v.Ip,v.Port)
-		if len(k) > 5{
-			output[k] = v
-		}
-	}
-	return output
-}
-func (m *Msg)GetHashTable()map[string]Msg{
-	output := make(map[string]Msg)
-	for _, v := range m.HashTable{
-		output[v.GetTID()] = v
-	}
-	return output
-}
 
 func FormatInit(friends map[string]*Node, hashtable map[string]Msg, fc int)[]Msg{
 	var output []Msg
 	for _,v := range friends{
 		m := Msg{}
-		m.Parse(fmt.Sprintf("INTRODUCE %s %s %s", v.Name, v.Ip, v.Port))
+		m.Parse(fmt.Sprintf("INTRODUCE %s %s %s\n", v.Name, v.Ip, v.Port))
 		output = append(output, m)
 	}
 	chance := int(math.Ceil(float64(fc)/2.0))
