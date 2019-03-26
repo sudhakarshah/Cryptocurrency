@@ -23,7 +23,7 @@ type Node struct{
 
 func (nd *Node)SendJson(m Msg)int{
 	startTime := time.Now()
-	b, err := fmt.Fprintf(nd.Sock, m.Data)
+	b, err := fmt.Fprintf(nd.Sock, m.Data+"\n")
 	if err != nil {
 		// TODO: json failed to send
 		nd.mux.Lock()

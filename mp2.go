@@ -69,7 +69,7 @@ func getRequest(conn net.Conn)string {
 }
 
 func queueIntroRequest(inbox *Box, conn net.Conn){
-	reader := bufio.NewReader(conn)
+	reader := bufio.NewReaderSize(conn, 200)
 	for {
 		s, _ := reader.ReadString('\n')
 		//fmt.Printf("# Recieved %d from intro\n", len(s))
