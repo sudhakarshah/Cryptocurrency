@@ -7,7 +7,7 @@ import (
 	"errors"
 	"time"
 	_"encoding/json"
-	"math/rand"
+	_"math/rand"
 	"strings"
 	"bufio"
 )
@@ -97,7 +97,8 @@ func listener(inbox * Box, in_con net.Conn){
 	s, err := bufio.NewReader(in_con).ReadString('\n')
 	fmt.Printf("# recieved string %s\n", s)
 	if err != nil{
-		fmt.Println("Error in listening")
+		fmt.Println("#Error in listening")
+		fmt.Printf("# %s", err)
 		// Something went wrong
 		return
 	}
@@ -112,14 +113,14 @@ func startListening(inbox * Box, port string){
 	ln, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		// handle error
-		//fmt.Printf("[ERROR] %s", err)
+		fmt.Printf("# [ERROR] %s", err)
 
 	}
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
 			// handle error
-			//fmt.Printf("[ERROR] %s", err)
+			fmt.Printf("# [ERROR] %s", err)
 		}
 		go listener(inbox, conn)
 	}
@@ -129,7 +130,7 @@ func startListening(inbox * Box, port string){
 func queueHB(inbox *Box){
 	for{
 		m := Msg{Type:"HB", Data:"HB\n"}
-		time.Sleep(3 * time.Second)
+		time.Sleep(10 * time.Second)
 		inbox.enqueue(m)
 	}
 }
@@ -167,7 +168,7 @@ func main(){
 	go queueIntroRequest(&inbox, conn)
 	go queueHB(&inbox)
 	// gossip flipper
-	send := true
+	//send := true
 
 	// handle requests
 	for {
@@ -241,8 +242,8 @@ func main(){
 			var removeList []string
 
 			for k, v := range members{
-				if !send && i > 3{
-					continue
+				if i > 5{
+					break
 				}
 				if v.SendJson(m) != 0 {
 					fmt.Printf("# Could not send message to %s\n", v.Name)
@@ -250,10 +251,6 @@ func main(){
 				}else{
 					i += 1
 				}
-				send = !send
-			}
-			if rand.Intn(3) == 0{
-				send = !send
 			}
 			for _, k := range removeList{
 				//fmt.Printf("Removing %s from members\n", k)

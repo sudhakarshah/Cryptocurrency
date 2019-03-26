@@ -23,8 +23,10 @@ type Node struct{
 
 func (nd *Node)SendJson(m Msg)int{
 	startTime := time.Now()
-	b, err := fmt.Fprintf(nd.Sock, m.Data+"\n")
+	b, err := fmt.Fprintf(nd.Sock, m.Data)
 	if err != nil {
+		fmt.Printf("# Failed sending to node %s\n", nd.Name)
+		fmt.Printf("# ERROR: %s\n", err)
 		// TODO: json failed to send
 		nd.mux.Lock()
 		if nd.Attempts > 2{
@@ -50,8 +52,8 @@ func (nd *Node)ListenToFriend(inbox *Box){
 		//fmt.Printf("# Recieved %s from %s\n", s, nd.Name)
 		time.Sleep(1 * time.Millisecond)
 		if err != nil {
-			// fmt.Printf("# Failed listening to node %s\n", nd.Name)
-			// fmt.Printf("# ERROR: %s\n", err)
+			fmt.Printf("# Failed listening \n", nd.Name)
+			fmt.Printf("# ERROR: %s\n", err)
 			return
 		}
 		if len(s) > 0{
