@@ -276,6 +276,9 @@ func main(){
 			var removeList []string
 			// Ping everyone in the contacts
 			for k, v := range members{
+				if rand.Intn(2) != 0{
+					continue
+				}
 				if v.Ip == ip && v.Port == port {
 					continue
 				}
