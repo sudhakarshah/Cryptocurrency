@@ -220,7 +220,9 @@ func main(){
 			go nd.ListenToFriend(&inbox)
 			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = &nd
 			for _, msg := range init{
-				nd.SendJson(msg)
+				if rand.Intn(5) == 0{
+					nd.SendJson(msg)
+				}
 			}
 
 
