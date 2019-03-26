@@ -241,7 +241,7 @@ func main(){
 			var removeList []string
 
 			for k, v := range members{
-				if rand.Intn(3) == 0 && i > 3{
+				if !send && i > 3{
 					continue
 				}
 				if v.SendJson(m) != 0 {
@@ -250,6 +250,9 @@ func main(){
 				}else{
 					i += 1
 				}
+				send = !send
+			}
+			if rand.Intn(3) == 0{
 				send = !send
 			}
 			for _, k := range removeList{
