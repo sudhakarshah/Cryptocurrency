@@ -280,6 +280,9 @@ func main(){
 					continue
 				}
 				for _, p := range ping{
+					if rand.Intn(4) != 0{
+						continue
+					}
 					if v.SendJson(p) != 0 {
 						removeList = append(removeList, k)
 					}else{
