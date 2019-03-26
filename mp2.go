@@ -285,9 +285,9 @@ func main(){
 				if v.Ip == ip && v.Port == port {
 					continue
 				}
-				for _, p := range ping{
-					if rand.Intn(4) != 0{
-						continue
+				for i, p := range ping{
+					if i > 3{
+						break
 					}
 					if v.SendJson(p) != 0 {
 						removeList = append(removeList, k)
