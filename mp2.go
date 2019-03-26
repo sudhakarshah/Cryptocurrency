@@ -214,10 +214,15 @@ func main(){
 			if _, ok := members[target_id];ok{
 				continue
 			}
-			//init := FormatInit(members, hashtable, len(members))
+			init := FormatInit(members, hashtable, len(members))
 			nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix()), Sock:m.Sock, Attempts:0}
 			go nd.ListenToFriend(&inbox)
 			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = &nd
+			for _, msg := range init{
+				nd.SendJson(msg)
+			}
+
+
 
 		case "TRANSACTION":
 			// check if the transaction exists if so, continue

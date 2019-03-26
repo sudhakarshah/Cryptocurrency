@@ -82,7 +82,7 @@ func FormatInit(friends map[string]*Node, hashtable map[string]Msg, fc int)[]Msg
 	if chance == 0{chance = 1}
 	for _,v := range hashtable{
 		//if rand.Intn(chance) == 0 {
-			output = append(output, v)
+		output = append(output, v)
 		//}
 	}
 	return output

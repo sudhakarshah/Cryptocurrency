@@ -1,4 +1,6 @@
 import glob
+from subprocess import Popen, PIPE, STDOUT
+
 
 ACTION = 0
 TIMESTAMP = 1
@@ -13,6 +15,7 @@ RECIEVED = "RECIEVED"
 SEND = "SEND"
 UPDATE = "UPDATE"
 
+
 def totalSends(log):
     return
 
@@ -21,6 +24,9 @@ def tokenize(log_line):
     return log_line.split(' ')
 
 if __name__ == "__main__":
+
+
+
     logFiles = glob.glob("./node*.log")
     contents = []
     for name in logFiles:
