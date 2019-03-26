@@ -219,10 +219,7 @@ func main(){
 			nd := Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix()), Sock:m.Sock, Attempts:0}
 			go nd.ListenToFriend(&inbox)
 			members[fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())] = &nd
-			for i, msg := range ping{
-				if i > 4{
-					break
-				}
+			for _, msg := range ping{
 				nd.SendJson(msg)
 			}
 
