@@ -22,8 +22,8 @@ type Node struct{
 }
 
 func (nd *Node)SendJson(m Msg)int{
-	startTime := time.Now()
-	b, err := fmt.Fprintf(nd.Sock, m.Data)
+	// startTime := time.Now()
+	_, err := fmt.Fprintf(nd.Sock, m.Data)
 	if err != nil {
 		fmt.Printf("# Failed sending to node %s\n", nd.Name)
 		fmt.Printf("# ERROR: %s\n", err)
