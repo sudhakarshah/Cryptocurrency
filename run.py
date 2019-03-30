@@ -5,8 +5,8 @@ from subprocess import Popen
 
 intro_port = 9999
 intro_ip = "0.0.0.0"
-rate = 20
-nodes = 20
+rate = 1
+nodes = 100
 
 
 prefix = ""
@@ -32,4 +32,3 @@ for i in commands:
 for p in procs:
     p.wait()
     print(p)
-

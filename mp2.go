@@ -68,6 +68,7 @@ func getRequest(conn net.Conn)string {
 	return strings.TrimSpace(status)
 }
 
+/* queuing messages from the service*/
 func queueIntroRequest(inbox *Box, conn net.Conn){
 	reader := bufio.NewReaderSize(conn, 200)
 	for {
@@ -137,7 +138,7 @@ func queueHB(inbox *Box){
 
 
 func main(){
-	// Expects 3 arguments: ip, port, 
+	// Expects 3 arguments: ip, port,
 	if len(os.Args) != 5 {
 		fmt.Println("Expected 3 arguments: Intro ip, Intro port, Local Listening Port, Name")
 		return
@@ -173,6 +174,7 @@ func main(){
 	// handle requests
 	for {
 		m, err := inbox.pop()
+		// sleeping if no message in inbox
 		if err != nil{
 			time.Sleep(10)
 			continue
@@ -183,6 +185,7 @@ func main(){
 		case "INTRODUCE":
 			target_id := fmt.Sprintf("%s:%s:%s",m.GetName(),m.GetIp(),m.GetPort())
 			my_id := fmt.Sprintf("%s:%s:%s",name,ip,port)
+			// already known node or itself
 			if _, ok := members[target_id];ok || target_id == my_id {
 				continue
 			}
@@ -204,7 +207,7 @@ func main(){
 			for _, nd := range members{
 				nd.SendJson(m)
 			}
-			// send 
+			// send
 			if nd.SendJson(join) == 0{
 				members[target_id] = &nd
 				go nd.ListenToFriend(&inbox)
@@ -222,8 +225,6 @@ func main(){
 			for _, msg := range ping{
 				nd.SendJson(msg)
 			}
-
-
 
 		case "TRANSACTION":
 			// check if the transaction exists if so, continue
