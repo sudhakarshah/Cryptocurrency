@@ -179,7 +179,7 @@ func main(){
 			time.Sleep(10)
 			continue
 		}
-		fmt.Printf("RECIEVED %d %s %d %d %d\n",int64(time.Now().Unix()), m.GetType(), len(m.Data), len(members), len(hashtable) )
+		//fmt.Printf("RECIEVED %d %s %d %d %d\n",int64(time.Now().Unix()), m.GetType(), len(m.Data), len(members), len(hashtable) )
 		//fmt.Printf("Members Count: %d\nTransaction Count: %d\n", len(members), len(hashtable))
 		switch m.GetType() {
 		case "INTRODUCE":
