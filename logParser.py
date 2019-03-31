@@ -77,8 +77,23 @@ if __name__ == "__main__":
         delay_stat[k] = (minimum, median, maximum)
 
     x = np.arange(len(minArray))
+    plt.figure(0)
     plt.plot(x, minArray)
     plt.plot(x, medArray)
     plt.plot(x, maxArray)
-    plt.legend(['min','med','max'], loc='upper left')
+    plt.legend(['min','med','max'], loc='best')
     plt.savefig("prop.png")
+
+    plt.figure(1)
+    x = np.arange(len(haveFollowing))
+    y = []
+    for k, v in haveFollowing.items():
+        y.append(v)
+
+    plt.scatter(x, y)
+    plt.savefig("count.png")
+
+
+
+
+
