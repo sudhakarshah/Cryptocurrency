@@ -19,11 +19,15 @@ type Node struct{
 	Sock net.Conn
 	jsonEncoder *json.Encoder
 	mux sync.Mutex
+	isConnected bool
 }
 
 func (nd *Node)SendJson(m Msg)int{
-	// startTime := time.Now()
-	_, err := fmt.Fprintf(nd.Sock, m.Data)
+	if (!nd.isConnected) {
+		return 0
+	}
+	startTime := time.Now()
+	b, err := fmt.Fprintf(nd.Sock, m.Data)
 	if err != nil {
 		fmt.Printf("# Failed sending to node %s\n", nd.Name)
 		fmt.Printf("# ERROR: %s\n", err)
@@ -40,11 +44,11 @@ func (nd *Node)SendJson(m Msg)int{
 		nd.Attempts = 0
 		nd.mux.Unlock()
 	}
-	// if m.Type == "TRANSACTION"{
-	// 	fmt.Printf("SEND %d %s %d %d %s\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime), m.GetTID()) // time, msg type, size, duration
-	// } else {
-	// 	fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime)) // time, msg type, size, duration
-	// }
+	if m.Type == "TRANSACTION"{
+		fmt.Printf("SEND %d %s %d %d %s\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime), m.GetTID()) // time, msg type, size, duration
+	} else {
+		fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime)) // time, msg type, size, duration
+	}
 	// why sleep here?
 	time.Sleep(1 * time.Millisecond)
 	return 0
