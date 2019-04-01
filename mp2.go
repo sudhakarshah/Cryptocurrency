@@ -127,7 +127,6 @@ func startListening(inbox * Box, port string){
 	}
 }
 
-
 func queueHB(inbox *Box){
 	for{
 		m := Msg{Type:"HB", Data:"HB\n"}
@@ -154,7 +153,6 @@ func getUnconnectedNode(members map[string]*Node)(string) {
 	}
 	return ""
 }
-
 
 func main(){
 	// Expects 3 arguments: ip, port,
@@ -212,13 +210,10 @@ func main(){
 			}
 
 			// less than 4 connected
-			//&& rand.Intn(2) == 0
 			if (countConnectedNodes(members) < required_connection) {
 				// send JOIN MESSAGE then INIT message
 				join := Msg{}
 				join.Parse(fmt.Sprintf("JOIN %s %s %s\n", name, ip, port))
-
-				//fmt.Printf("Sending %s to port %d\n", m.GetType(), len(port))
 				conn, err := net.Dial("tcp", m.GetIp()+":"+m.GetPort())
 
 				if err != nil {
@@ -227,7 +222,6 @@ func main(){
 				}
 
 				var nd Node
-
 				nd = Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix()), Sock:conn, Attempts:0,isConnected:true}
 				for _, nd := range members{
 					nd.SendJson(m)
@@ -242,8 +236,6 @@ func main(){
 				nd = Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix()), Sock:nil, Attempts:0,isConnected:false}
 				members[target_id] = &nd
 			}
-
-
 
 		case "JOIN":
 			// send INTRODUCE and TRANACTION MESSAGES
@@ -270,7 +262,6 @@ func main(){
 			// Insert transaction
 			hashtable[m.GetTID()] = m
 			fmt.Printf("UPDATE %d %s %s\n",int64(time.Now().Unix()), m.GetType(), m.GetTID() ) // time, msg type, size, member_count, transaction_count
-
 
 			var removeList []string
 
@@ -330,11 +321,7 @@ func main(){
 				delete(members, k)
 			}
 
-
-
-
-
-
+			// If number of connections not sufficient, connect to more nodes
 			count := countConnectedNodes(members)
 			// looping the required number of times
 			for i := count; i < required_connection; i++ {
@@ -347,33 +334,19 @@ func main(){
 				// send JOIN MESSAGE then INIT message
 				join := Msg{}
 				join.Parse(fmt.Sprintf("JOIN %s %s %s\n", name, ip, port))
-
-				//fmt.Printf("Sending %s to port %d\n", m.GetType(), len(port))
 				conn, err := net.Dial("tcp", nd.Ip+":"+nd.Port)
 
 				if err != nil {
 					fmt.Printf("# Cannot connect to the introduced node %s\n", nd.Name)
 					continue
 				}
-
-				// var nd Node
 				nd.Sock = conn
 				nd.isConnected = true
-				// nd = Node{Name:m.GetName(), Ip:m.GetIp(), Port:m.GetPort(), LastActive:int64(time.Now().Unix()), Sock:conn, Attempts:0}
-				// for _, nd := range members{
-				// 	nd.SendJson(m)
-				// }
-				// send
-
 				if nd.SendJson(join) == 0 {
 					members[target_id] = nd
 					go nd.ListenToFriend(&inbox)
 				}
-
 			}
-
-
-
 		default:
 			fmt.Printf("# CANNOT PARSE MESSAGE. RECIEVED %+v\n",m )
 		}
