@@ -27,6 +27,43 @@ type Msg struct{
 	Data string
 }
 
+type Block struct{
+	PrevHash string
+	Hash string
+	Solution string
+	Transactions []string
+}
+
+var PREV_HASH_IND = 1
+var CURR_HASH_IND = 2
+var SOLUTION_IND = 3
+var TRANSACTION_IND = 4
+var BLOCK = "BLOCK"
+
+// Convert Block to Msg
+func (b *Block)FormatMsg()Msg{
+	tokens := make([]string, 4)
+	tokens[0] = BLOCK
+	tokens[PREV_HASH_IND] = b.PrevHash
+	tokens[CURR_HASH_IND] = b.Hash
+	tokens[SOLUTION_IND] = b.PrevHash
+	tokens = append(tokens, b.Transactions...)
+	s := strings.Join(tokens, " ")
+	return Msg{Type:BLOCK, Data:s}
+}
+
+// Used to convert string to Msg to queue to inbox
+func (m *Msg)ParseBlock(s string){
+	m.Data = s
+	m.Type = "BLOCK"
+
+}
+
+// Convert Msg to Block
+func (m *Msg)FormatBlock()Block{
+	tokens := strings.Split(strings.TrimSpace(m.Data), " ")
+	return Block{PrevHash:tokens[PREV_HASH_IND], Hash:tokens[CURR_HASH_IND], Solution:tokens[SOLUTION_IND], Transactions:tokens[TRANSACTION_IND:]}
+}
 
 func (m *Msg)Parse(s string)int{
 	m.Data = s
@@ -48,6 +85,8 @@ func (m *Msg)Parse(s string)int{
 		m.parseStandard(tokens...)
 	case "DIE":
 		return 1
+	case BLOCK:
+		m.ParseBlock(s)
 	default:
 		fmt.Printf("CANNOT PARSE STRING. RECIEVED %s\n", tokens[0])
 		return -1
