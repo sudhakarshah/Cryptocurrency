@@ -8,6 +8,7 @@ import(
 	"net"
 	"math"
 	"crypto/sha256"
+	"sort"
 )
 
 
@@ -33,22 +34,73 @@ type Block struct{
 	Hash string
 	Solution string
 	Transactions []string
+	Length int
+	Accounts map[int]int
 }
 
 var PREV_HASH_IND = 1
 var CURR_HASH_IND = 2
 var SOLUTION_IND = 3
-var TRANSACTION_IND = 4
+var LENGTH_IND = 4
+var TRANSACTION_IND = 5
+var ACCOUNT_IND = 6
 var BLOCK = "BLOCK"
+
+func transactionsToString(ts []string)string{
+	return strings.Join(ts, ",")
+}
+func accountsToString(acc map[int]int)string{
+	var accList []string
+	for i, k := range acc{
+		account := strconv.Itoa(i)
+		amount := strconv.Itoa(k)
+		accList = append(accList, fmt.Sprintf("%s:%s",account,amount))
+	}
+	return strings.Join(accList, ",")
+}
+
+// outputs serialized sequence of transactions strings and updated account info
+func serializeTransactions(th map[string]Msg, old_acc map[int]int)([]string, map[int]int){
+	var msgList []Msg
+	for _, v:=range th{
+		msgList = append(msgList, v)
+	}
+
+	sort.SliceStable(msgList, func(i, j int)bool{
+		return msgList[i].GetTimestamp() < msgList[i].GetTimestamp()
+	})
+
+	account := old_acc
+	var output []string
+
+	// check to see if the transactions are consistent
+	for _, v := range msgList{
+		source := v.GetSource()
+		dest := v.GetDest()
+		amount := v.GetAmount()
+
+		s_money := account[source]
+		if s_money - amount < 0{
+			continue
+		}
+
+		account[source] -= amount
+		account[dest] += amount
+		output = append(output, v.Data)
+	}
+	return output, account
+}
 
 // Convert Block to Msg
 func (b *Block)FormatMsg()Msg{
-	tokens := make([]string, 4)
+	tokens := make([]string, 7)
 	tokens[0] = BLOCK
 	tokens[PREV_HASH_IND] = b.PrevHash
 	tokens[CURR_HASH_IND] = b.Hash
+	tokens[LENGTH_IND] = strconv.Itoa(b.Length)
 	tokens[SOLUTION_IND] = b.PrevHash
-	tokens = append(tokens, b.Transactions...)
+	tokens[TRANSACTION_IND] = transactionsToString(b.Transactions)
+	tokens[ACCOUNT_IND] = accountsToString(b.Accounts)
 	s := strings.Join(tokens, " ")
 	return Msg{Type:BLOCK, Data:s}
 }
@@ -81,7 +133,15 @@ func (m *Msg)ParseBlock(s string){
 // Convert Msg to Block
 func (m *Msg)FormatBlock()Block{
 	tokens := strings.Split(strings.TrimSpace(m.Data), " ")
-	return Block{PrevHash:tokens[PREV_HASH_IND], Hash:tokens[CURR_HASH_IND], Solution:tokens[SOLUTION_IND], Transactions:tokens[TRANSACTION_IND:]}
+	length, _ := strconv.Atoi(tokens[LENGTH_IND])
+	var accounts map[int]int
+	for _, v := range strings.Split(tokens[ACCOUNT_IND],","){
+		tk := strings.Split(v,":")
+		account, _ := strconv.Atoi(tk[0])
+		amount, _ := strconv.Atoi(tk[1])
+		accounts[account] = amount
+	}
+	return Block{PrevHash:tokens[PREV_HASH_IND], Hash:tokens[CURR_HASH_IND], Solution:tokens[SOLUTION_IND], Length:length, Transactions:strings.Split(tokens[TRANSACTION_IND], ","), Accounts:accounts}
 }
 
 func (m *Msg)Parse(s string)int{
