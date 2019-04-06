@@ -7,8 +7,9 @@ import(
 	"os"
 	"net"
 	"math"
-	_"math/rand"
+	"crypto/sha256"
 )
+
 
 
 type Msg struct{
@@ -50,6 +51,24 @@ func (b *Block)FormatMsg()Msg{
 	tokens = append(tokens, b.Transactions...)
 	s := strings.Join(tokens, " ")
 	return Msg{Type:BLOCK, Data:s}
+}
+
+func (b *Block)FormatVerify()string{
+	return fmt.Sprintf("VERIFY %s %s\n", b.Hash, b.Solution)
+}
+
+func (b *Block)FormatSolve()string{
+	if b.Hash == ""{
+		b.generateHash()
+	}
+	return fmt.Sprintf("SOLVE %s\n", b.Hash)
+}
+
+func (b *Block)generateHash(){
+	// Format input string for hash
+	format := append(b.Transactions, b.PrevHash)
+	s := strings.Join(format, " ")
+	b.Hash = fmt.Sprintf("%x",sha256.Sum256([]byte(s)))
 }
 
 // Used to convert string to Msg to queue to inbox
