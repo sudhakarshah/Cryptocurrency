@@ -19,9 +19,13 @@ type Node struct{
 	Sock net.Conn
 	jsonEncoder *json.Encoder
 	mux sync.Mutex
+	isConnected bool
 }
 
 func (nd *Node)SendJson(m Msg)int{
+	if (!nd.isConnected) {
+		return 0
+	}
 	startTime := time.Now()
 	b, err := fmt.Fprintf(nd.Sock, m.Data)
 	if err != nil {
@@ -42,9 +46,10 @@ func (nd *Node)SendJson(m Msg)int{
 	}
 	if m.Type == "TRANSACTION"{
 		fmt.Printf("SEND %d %s %d %d %s\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime), m.GetTID()) // time, msg type, size, duration
-	}else {
+	} else {
 		fmt.Printf("SEND %d %s %d %d\n",int64(time.Now().Unix()), m.GetType(), b,  time.Since(startTime)) // time, msg type, size, duration
 	}
+	// why sleep here?
 	time.Sleep(1 * time.Millisecond)
 	return 0
 }

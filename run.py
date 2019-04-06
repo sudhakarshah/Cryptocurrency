@@ -5,8 +5,8 @@ from subprocess import Popen
 
 intro_port = 9999
 intro_ip = "0.0.0.0"
-rate = 20
-nodes = 20
+rate = 1
+nodes = 100
 
 
 prefix = ""
@@ -16,7 +16,7 @@ else:
     print("Need an argument $(LOG_PREFIX). Got %s"%(sys.argv))
     exit()
 if len(sys.argv) == 3:
-    intro_ip = "sp19-cs425-g62-01.cs.illinois.edu"
+    intro_ip = "sp19-cs425-g21-02.cs.illinois.edu"
 
 commands = []
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -32,4 +32,3 @@ for i in commands:
 for p in procs:
     p.wait()
     print(p)
-
