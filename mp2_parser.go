@@ -27,6 +27,8 @@ type Msg struct{
 	HashTable []Msg
 	Sock net.Conn
 	Data string
+	QuesHash string
+	SolHash string
 }
 
 type Block struct{
@@ -45,6 +47,7 @@ var LENGTH_IND = 4
 var TRANSACTION_IND = 5
 var ACCOUNT_IND = 6
 var BLOCK = "BLOCK"
+var SOLVED = "SOLVED"
 
 func transactionsToString(ts []string)string{
 	return strings.Join(ts, ",")
@@ -123,13 +126,26 @@ func (b *Block)generateHash(){
 	b.Hash = fmt.Sprintf("%x",sha256.Sum256([]byte(s)))
 }
 
+
+func (b *Block)addTrans(s string){
+	b.Transactions = append(b.Transactions, s)
+}
+
+func (b *Block)TransactionCount()int{
+	return len(b.Transactions)
+}
+
+
 // Used to convert string to Msg to queue to inbox
 func (m *Msg)ParseBlock(s string){
 	m.Data = s
 	m.Type = "BLOCK"
-
 }
-
+func (m *Msg)ParseSolved(tokens ...string){
+	m.Type = SOLVED
+	m.QuesHash = tokens[1]
+	m.SolHash = tokens[2]
+}
 // Convert Msg to Block
 func (m *Msg)FormatBlock()Block{
 	tokens := strings.Split(strings.TrimSpace(m.Data), " ")
@@ -166,6 +182,8 @@ func (m *Msg)Parse(s string)int{
 		return 1
 	case BLOCK:
 		m.ParseBlock(s)
+	case "SOLVED":
+		m.ParseSolved(tokens...)
 	default:
 		fmt.Printf("CANNOT PARSE STRING. RECIEVED %s\n", tokens[0])
 		return -1
@@ -283,4 +301,10 @@ func (m * Msg)GetDest()int{
 }
 func (m * Msg)GetAmount()int{
 	return m.Amount
+}
+func (m * Msg)GetData()string{
+	return m.Data
+}
+func (b * Block)TrasactionCount()int{
+	return len(b.Transactions)
 }

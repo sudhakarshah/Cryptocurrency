@@ -102,6 +102,43 @@ func (in*Box) pop()(Msg,error){
 	return output, err
 }
 
+func (in*Box) peepBack()(Block,error){
+	var output Block
+	var err error
+	in.mux.Lock()
+	if len(in.messages) != 0{
+		output = in.messages[len(in.messages) - 1].FormatBlock()
+	} else {
+		err = errors.New("The inbox is empty")
+		in.mux.Unlock()
+		return output, err
+	}
+	in.mux.Unlock()
+	return output, err
+}
+
+func (in*Box) addBlock(b Block)(){
+	// var err error
+	//in.mux.Lock()
+
+	len := len(in.messages)
+	if (len == 0) {
+		in.messages = append(in.messages, b.FormatMsg())
+		return
+	}
+	// finding common ancestor and updating the array
+	for i := len - 1; i  >= 0; i-- {
+		if b.PrevHash == in.messages[i].FormatBlock().Hash {
+			in.messages = append(in.messages[:i+1], b.FormatMsg())
+			return
+		}
+	}
+}
+
+
+
+
+
 type Log struct{
 	Time int64
 	Event string // Either send or transmit

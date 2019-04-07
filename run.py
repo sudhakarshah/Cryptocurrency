@@ -6,7 +6,7 @@ from subprocess import Popen
 intro_port = 9999
 intro_ip = "0.0.0.0"
 rate = 1
-nodes = 100
+nodes = 20
 
 
 prefix = ""
@@ -16,6 +16,7 @@ else:
     print("Need an argument $(LOG_PREFIX). Got %s"%(sys.argv))
     exit()
 if len(sys.argv) == 3:
+    print("Working in VM\n")
     intro_ip = "sp19-cs425-g21-02.cs.illinois.edu"
 
 commands = []

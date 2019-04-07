@@ -135,6 +135,14 @@ func queueHB(inbox *Box){
 	}
 }
 
+func queueBlockSolveBeat(inbox *Box){
+	for{
+		m := Msg{Type:"BLOCK_SOLVE", Data:"BLOCK_SOLVE\n"}
+		time.Sleep(1 * time.Second)
+		inbox.enqueue(m)
+	}
+}
+
 func countConnectedNodes(members map[string]*Node)(int) {
 	count := 0
 	for _, v := range members{
@@ -154,6 +162,34 @@ func getUnconnectedNode(members map[string]*Node)(string) {
 	return ""
 }
 
+func updateIncludedTransactions(includedTransactions map[string]int, b Block) {
+	for i := 0;  i < len(b.Transactions); i++ {
+		includedTransactions[b.Transactions[i]] = 1
+	}
+}
+
+func updateAccount(accounts map[int]int, m Msg)int{
+	isPossible := false
+	if m.Source == 0 {
+		isPossible = true
+	}
+	balance, ok := accounts[m.Source]
+	if ok && balance >= m.Amount {
+		accounts[m.Source] -= m.Amount
+		isPossible = true
+	}
+
+	if isPossible {
+		// if dest account doesnt exists
+		if _, ok := accounts[m.Dest]; !ok {
+			accounts[m.Dest] = 0
+		}
+		accounts[m.Dest] += m.Amount
+		return 0
+	}
+	return -1
+
+}
 func main(){
 	// Expects 3 arguments: ip, port,
 	if len(os.Args) != 5 {
@@ -170,23 +206,32 @@ func main(){
 	inbox := Box{}
 	var members map[string]*Node
 	var hashtable map[string]Msg
+	var accounts map[int]int
+	var tempAccounts map[int]int
+	var includedTransactions map[string]int
 	//var connected_members map[string]*Node
 	members = make(map[string]*Node)
 	hashtable = make(map[string]Msg)
+	accounts = make(map[int]int)
+	includedTransactions = make(map[string]int)
+
+	currentSolvingBlock := Block{}
 	name := os.Args[4]
 	port := os.Args[3]
-
+	// queue of blocks in the current chain
+	chain := Box{}
 	required_connection := 4;
 	// TODO: open port to listen to other nodes in another thread
 	go startListening(&inbox, port)
 	connect_string := fmt.Sprintf("CONNECT %s %s %s\n", name, ip, port)
-	conn, err := connect_to_intro(os.Args[1], os.Args[2])
+	connService, err := connect_to_intro(os.Args[1], os.Args[2])
 	if err != nil{
 		//fmt.Println(err)
 	}
-	fmt.Fprintf(conn, connect_string)
-	go queueIntroRequest(&inbox, conn)
+	fmt.Fprintf(connService, connect_string)
+	go queueIntroRequest(&inbox, connService)
 	go queueHB(&inbox)
+	go queueBlockSolveBeat(&inbox)
 	// gossip flipper
 	//send := true
 
@@ -347,6 +392,91 @@ func main(){
 					go nd.ListenToFriend(&inbox)
 				}
 			}
+		case "SOLVED":
+			if m.QuesHash != currentSolvingBlock.Hash {
+				continue
+			}
+
+			currentSolvingBlock.Solution = m.SolHash
+			chain.addBlock(currentSolvingBlock)
+			updateIncludedTransactions(includedTransactions, currentSolvingBlock);
+			accounts = currentSolvingBlock.Accounts
+			// undo the solve request sent to the service
+
+
+			// Broadcasting the new block to everyone
+			msg := currentSolvingBlock.FormatMsg()
+
+			for _, v := range members{
+				if v.SendJson(msg) != 0 {
+					fmt.Printf("# Could not send block message to %s\n", v.Name)
+					//removeList = append(removeList, k)
+				}
+			}
+			currentSolvingBlock = Block{Hash:""}
+
+
+
+		case "BLOCK_SOLVE":
+			// looping through all messages i have
+			newBlock := Block{}
+
+			tempAccounts = make(map[int]int)
+			for k,v := range accounts {
+			  tempAccounts[k] = v
+			}
+
+
+			for k,v := range hashtable {
+				// if it has not been included in blocks before
+				if _, ok := includedTransactions[k]; !ok {
+					if updateAccount(tempAccounts, v) == -1 {
+						continue
+					}
+					newBlock.addTrans(k)
+				}
+			}
+			newBlock.Accounts = tempAccounts
+			lastBlock, err  := chain.peepBack()
+			// no block in this chain
+			if err != nil {
+				newBlock.PrevHash = "0"
+				newBlock.Length = 1
+			} else {
+				newBlock.PrevHash = lastBlock.Hash
+				newBlock.Length = lastBlock.Length + 1
+			}
+
+			// sending solve message to the service
+			fmt.Fprintf(connService, newBlock.FormatSolve())
+			currentSolvingBlock = newBlock
+
+
+		case "BLOCK":
+			b := m.FormatBlock()
+			// len := len(chain.messages)
+			lastBlock, err  := chain.peepBack()
+
+			updateChain := false
+			// if no block then accept whatever you get and add it to ur chain
+			if err != nil {
+				updateChain = true
+			} else if (b.Length > lastBlock.Length) || (b.Length == lastBlock.Length && b.TransactionCount() > lastBlock.TransactionCount()) {
+				// replacing last block with new block if new length larger. TODO: need to add tie breaking strategy
+				updateChain = true
+			}
+
+			if updateChain {
+				// on success scenario handled, that is prev block present in the queue
+				chain.addBlock(b)
+				updateIncludedTransactions(includedTransactions, b);
+				accounts = b.Accounts
+				// undo the solve request sent to the service
+				currentSolvingBlock = Block{Hash:""}
+			}
+
+
+
 		default:
 			fmt.Printf("# CANNOT PARSE MESSAGE. RECIEVED %+v\n",m )
 		}
