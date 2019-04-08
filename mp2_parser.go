@@ -105,6 +105,7 @@ func (b *Block)FormatMsg()Msg{
 	tokens[TRANSACTION_IND] = transactionsToString(b.Transactions)
 	tokens[ACCOUNT_IND] = accountsToString(b.Accounts)
 	s := strings.Join(tokens, " ")
+	s += "\n"
 	return Msg{Type:BLOCK, Data:s}
 }
 
@@ -151,10 +152,17 @@ func (m *Msg)FormatBlock()Block{
 	tokens := strings.Split(strings.TrimSpace(m.Data), " ")
 	length, _ := strconv.Atoi(tokens[LENGTH_IND])
 	var accounts map[int]int
+	accounts = make(map[int]int)
 	for _, v := range strings.Split(tokens[ACCOUNT_IND],","){
 		tk := strings.Split(v,":")
-		account, _ := strconv.Atoi(tk[0])
-		amount, _ := strconv.Atoi(tk[1])
+		account, err := strconv.Atoi(tk[0])
+		if err != nil{
+			fmt.Printf("#ERROR NOT ABLE TO PARSE ACCOUNT %s\n", err)
+		}
+		amount, err := strconv.Atoi(tk[1])
+		if err != nil{
+			fmt.Printf("#ERROR NOT ABLE TO PARSE AMOUNT  %s\n", err)
+		}
 		accounts[account] = amount
 	}
 	return Block{PrevHash:tokens[PREV_HASH_IND], Hash:tokens[CURR_HASH_IND], Solution:tokens[SOLUTION_IND], Length:length, Transactions:strings.Split(tokens[TRANSACTION_IND], ","), Accounts:accounts}
