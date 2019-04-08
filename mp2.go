@@ -406,7 +406,7 @@ func main(){
 
 			// Broadcasting the new block to everyone
 			msg := currentSolvingBlock.FormatMsg()
-
+			fmt.Println("SEND_BLOCK %d %s\n", int64(time.Now().Unix()), currentSolvingBlock.Hash)
 			for _, v := range members{
 				if v.SendJson(msg) != 0 {
 					fmt.Printf("# Could not send block message to %s\n", v.Name)
@@ -454,6 +454,7 @@ func main(){
 
 		case "BLOCK":
 			b := m.FormatBlock()
+			fmt.Println("RECIEVED_BLOCK %d %s\n", int64(time.Now().Unix()), b.Hash)
 			// len := len(chain.messages)
 			lastBlock, err  := chain.peepBack()
 
@@ -473,6 +474,7 @@ func main(){
 				accounts = b.Accounts
 				// undo the solve request sent to the service
 				currentSolvingBlock = Block{Hash:""}
+				fmt.Println("ACCEPTED %d %s\n", int64(time.Now().Unix()), strings.Join(b.Transactions, ","))
 			}
 
 
