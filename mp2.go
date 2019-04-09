@@ -311,9 +311,9 @@ func main(){
 			var removeList []string
 
 			for k, v := range members{
-				if rand.Intn(3) != 0 {
-					continue
-				}
+				// if rand.Intn(3) != 0 {
+				// 	continue
+				// }
 				if v.SendJson(m) != 0 {
 					fmt.Printf("# Could not send message to %s\n", v.Name)
 					removeList = append(removeList, k)
