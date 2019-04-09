@@ -117,22 +117,23 @@ func (in*Box) peepBack()(Block,error){
 	return output, err
 }
 
-func (in*Box) addBlock(b Block)(){
+func (in*Box) addBlock(b Block)(int){
 	// var err error
 	//in.mux.Lock()
 
 	len := len(in.messages)
 	if (len == 0) {
 		in.messages = append(in.messages, b.FormatMsg())
-		return
+		return 0
 	}
 	// finding common ancestor and updating the array
 	for i := len - 1; i  >= 0; i-- {
 		if b.PrevHash == in.messages[i].FormatBlock().Hash {
 			in.messages = append(in.messages[:i+1], b.FormatMsg())
-			return
+			return len - i
 		}
 	}
+	return len + 1
 }
 
 
