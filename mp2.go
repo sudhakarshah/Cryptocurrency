@@ -311,7 +311,7 @@ func main(){
 			var removeList []string
 
 			for k, v := range members{
-				if rand.Intn(3) != 0{
+				if rand.Intn(3) != 0 {
 					continue
 				}
 				if v.SendJson(m) != 0 {
@@ -474,7 +474,16 @@ func main(){
 				accounts = b.Accounts
 				// undo the solve request sent to the service
 				currentSolvingBlock = Block{Hash:""}
-				fmt.Println("ACCEPTED %d %s\n", int64(time.Now().Unix()), strings.Join(b.Transactions, ","))
+
+				fmt.Println("ACCEPTED %d %s %s\n", int64(time.Now().Unix()), b.Hash, strings.Join(b.Transactions, ","))
+
+				// gossiping the block to other nodes
+				for _, v := range members{
+					if v.SendJson(m) != 0 {
+						fmt.Printf("# Could not send block message to %s\n", v.Name)
+						//removeList = append(removeList, k)
+					}
+				}
 			}
 
 
