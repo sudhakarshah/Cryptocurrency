@@ -32,7 +32,7 @@ def tokenize(log_line):
 
 if __name__ == "__main__":
 
-    logFiles = glob.glob("./node*.log")
+    logFiles = glob.glob("./block_100_20/node*.log")
     contents = []
     for name in logFiles:
         lines = open(name, "r").read().split('\n')
@@ -44,10 +44,10 @@ if __name__ == "__main__":
     block_first_occ = {}
     block_to_trans = {}
     block_last_occ = {}
-
+    split_events = []
     for log in contents:
         for l in log:
-            if l[0] == "#" or len(l) < 2 or not l[0].isalpha():
+            if l[0] == "#" or len(l) < 2 or not l[0][:1].isalpha():
                 continue
             if l[ACTION] == UPDATE:
                 if l[TID] not in transaction_first_occ:
@@ -68,6 +68,8 @@ if __name__ == "__main__":
                 # Map block to array of transactions
                 transactions = set(l[BLOCK_TRANS].split(","))
                 block_to_trans[l[BLOCK_HASH]] = transactions
+            if l[ACTION] == "CHAIN_SPLIT":
+                split_events.append(float(l[TIMESTAMP]))
 
     block_ordering = list(block_first_occ.keys())
 
@@ -116,3 +118,7 @@ if __name__ == "__main__":
     x = np.arange(len(transaction_appear))
     plt.scatter(x, transaction_appear)
     plt.savefig("trans_to_block_prop.png")
+
+    plt.figure(3)
+    plt.hist(split_events, bins=200)
+    plt.savefig("split_frequency.png")
