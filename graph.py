@@ -58,14 +58,13 @@ if __name__ == "__main__":
                 # First occ
                 if l[BLOCK_HASH] not in block_first_occ:
                     block_first_occ[l[BLOCK_HASH]] = float("inf")
-                print(l)
                 if float(l[TIMESTAMP]) < block_first_occ[l[BLOCK_HASH]]:
                     block_first_occ[l[BLOCK_HASH]] = float(l[TIMESTAMP])
                 # Last occ
                 if l[BLOCK_HASH] not in block_last_occ:
-                    block_first_occ[l[BLOCK_HASH]] = 0.0
+                    block_last_occ[l[BLOCK_HASH]] = 0.0
                 if float(l[TIMESTAMP]) > block_last_occ[l[BLOCK_HASH]]:
-                    block_first_occ[l[BLOCK_HASH]] = float(l[TIMESTAMP])
+                    block_last_occ[l[BLOCK_HASH]] = float(l[TIMESTAMP])
                 # Map block to array of transactions
                 transactions = set(l[BLOCK_TRANS].split(","))
                 block_to_trans[l[BLOCK_HASH]] = transactions
@@ -82,6 +81,7 @@ if __name__ == "__main__":
                     haveFollowing[l[BLOCK_HASH]] = 0
                 haveFollowing[l[BLOCK_HASH]] += 1
     print("Total:%d" % (len(haveFollowing)))
+    print(haveFollowing)
 
     block_occ_diff = []
     for k in block_ordering:
@@ -89,7 +89,8 @@ if __name__ == "__main__":
         block_occ_diff.append(diff)
 
     transaction_appear = []
-    for k, v in transaction_first_occ.items():
+    ordered_trans = [(k, transaction_first_occ[k]) for k in sorted(transaction_first_occ, key=transaction_first_occ.get)]
+    for k, v in ordered_trans:
         shortest = float("inf")
         for bh, ti in block_first_occ.items():
             transactions = block_to_trans[bh]
@@ -113,5 +114,5 @@ if __name__ == "__main__":
 
     plt.figure(2)
     x = np.arange(len(transaction_appear))
-    plt.plot(x, transaction_appear)
+    plt.scatter(x, transaction_appear)
     plt.savefig("trans_to_block_prop.png")
