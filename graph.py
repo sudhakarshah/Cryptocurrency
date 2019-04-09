@@ -12,7 +12,7 @@ TRANSMISSION_TIME = 4
 TID = 3
 MEMBER_SIZE = 4
 HASHTABLE_SIZE = 5
-
+#
 BLOCK_HASH = 2
 BLOCK_TRANS = -1
 
@@ -25,9 +25,10 @@ ACCEPTED = "ACCEPTED"
 def totalSends(log):
     return
 
-    
+
 def tokenize(log_line):
     return log_line.split(' ')
+
 
 if __name__ == "__main__":
 
@@ -37,7 +38,7 @@ if __name__ == "__main__":
         lines = open(name, "r").read().split('\n')
         lines = list(map(tokenize, lines))
         contents.append(lines)
-    print("There are %d log files"%(len(contents)))
+    print("There are %d log files" % (len(contents)))
 
     transaction_first_occ = {}
     block_first_occ = {}
@@ -48,21 +49,22 @@ if __name__ == "__main__":
         for l in log:
             if l[0] == "#" or len(l) < 2 or not l[0].isalpha():
                 continue
-            if l[ACTION]== TRANSACTION:
+            if l[ACTION] == UPDATE:
                 if l[TID] not in transaction_first_occ:
                     transaction_first_occ[l[TID]] = float("inf")
-		if float(l[TIMESTAMP]) < transaction_first_occ[l[TID]]:
+                if float(l[TIMESTAMP]) < transaction_first_occ[l[TID]]:
                     transaction_first_occ[l[TID]] = l[TIMESTAMP]
             if l[ACTION] == ACCEPTED:
                 # First occ
                 if l[BLOCK_HASH] not in block_first_occ:
                     block_first_occ[l[BLOCK_HASH]] = float("inf")
-		if float(l[TIMESTAMP]) < block_first_occ[l[BLOCK_HASH]]:
+                print(l)
+                if float(l[TIMESTAMP]) < block_first_occ[l[BLOCK_HASH]]:
                     block_first_occ[l[BLOCK_HASH]] = l[TIMESTAMP]
                 # Last occ
                 if l[BLOCK_HASH] not in block_last_occ:
                     block_first_occ[l[BLOCK_HASH]] = 0.0
-		if float(l[TIMESTAMP]) > block_last_occ[l[BLOCK_HASH]]:
+                if float(l[TIMESTAMP]) > block_last_occ[l[BLOCK_HASH]]:
                     block_first_occ[l[BLOCK_HASH]] = l[TIMESTAMP]
                 # Map block to array of transactions
                 transactions = set(l[BLOCK_TRANS].split(","))
@@ -79,7 +81,7 @@ if __name__ == "__main__":
                 if l[BLOCK_HASH] not in haveFollowing:
                     haveFollowing[l[BLOCK_HASH]] = 0
                 haveFollowing[l[BLOCK_HASH]] += 1
-    print("Total:%d"%(len(haveFollowing)))
+    print("Total:%d" % (len(haveFollowing)))
 
     block_occ_diff = []
     for k in block_ordering:
@@ -95,7 +97,6 @@ if __name__ == "__main__":
                 diff = ti - v
                 shortest = min(shortest, diff)
         transaction_appear.append(shortest)
-
 
     x = np.arange(len(block_occ_diff))
     plt.figure(0)
@@ -114,5 +115,3 @@ if __name__ == "__main__":
     x = np.arange(len(transaction_appear))
     plt.plot(x, block_transaction_appear)
     plt.savefig("trans_to_block_prop.png")
-    
-

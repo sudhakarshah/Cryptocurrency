@@ -454,7 +454,7 @@ func main(){
 
 		case "BLOCK":
 			b := m.FormatBlock()
-			fmt.Println("RECIEVED_BLOCK %d %s\n", int64(time.Now().Unix()), b.Hash)
+			fmt.Printf("RECIEVED_BLOCK %d %s\n", int64(time.Now().Unix()), b.Hash)
 			// len := len(chain.messages)
 			lastBlock, err  := chain.peepBack()
 
@@ -475,7 +475,7 @@ func main(){
 				// undo the solve request sent to the service
 				currentSolvingBlock = Block{Hash:""}
 
-				fmt.Println("ACCEPTED %d %s %s\n", int64(time.Now().Unix()), b.Hash, strings.Join(b.Transactions, ","))
+				fmt.Printf("ACCEPTED %d %s %s\n", int64(time.Now().Unix()), b.Hash, strings.Join(b.Transactions, ","))
 
 				// gossiping the block to other nodes
 				for _, v := range members{
@@ -487,7 +487,7 @@ func main(){
 			}
 
 			if (b.Length == lastBlock.Length) {
-				fmt.Println("CHAIN_SPLIT %d %s %d\n", int64(time.Now().Unix()), b.Hash, ansestorLen)
+				fmt.Printf("CHAIN_SPLIT %d %s %d\n", int64(time.Now().Unix()), b.Hash, ansestorLen)
 			}
 
 
