@@ -462,14 +462,14 @@ func main(){
 			// if no block then accept whatever you get and add it to ur chain
 			if err != nil {
 				updateChain = true
-			} else if (b.Length > lastBlock.Length) || (b.Length == lastBlock.Length && b.TransactionCount() > lastBlock.TransactionCount()) {
+			} else if (b.Length > lastBlock.Length) || (b.Length == lastBlock.Length && (b.TransactionCount() > lastBlock.TransactionCount() || b.Hash > lastBlock.Hash)) {
 				// replacing last block with new block if new length larger. TODO: need to add tie breaking strategy
 				updateChain = true
 			}
-
+			ansestorLen := -1
 			if updateChain {
 				// on success scenario handled, that is prev block present in the queue
-				chain.addBlock(b)
+				ansestorLen = chain.addBlock(b)
 				updateIncludedTransactions(includedTransactions, b);
 				accounts = b.Accounts
 				// undo the solve request sent to the service
@@ -484,6 +484,10 @@ func main(){
 						//removeList = append(removeList, k)
 					}
 				}
+			}
+
+			if (b.Length == lastBlock.Length) {
+				fmt.Println("CHAIN_SPLIT %d %s %d\n", int64(time.Now().Unix()), b.Hash, ansestorLen)
 			}
 
 
