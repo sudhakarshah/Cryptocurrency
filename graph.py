@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     for log in contents:
         for l in log:
-            if l[0] == "#" or len(l) < 2 or !l[0].isalpha():
+            if l[0] == "#" or len(l) < 2 or not l[0].isalpha():
                 continue
             if l[ACTION]== TRANSACTION:
                 if l[TID] not in transaction_first_occ:
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     haveFollowing = {}
     for log in contents:
         for l in log:
-            if l[0] == "#" or len(l) < 2 or !l[0].isalpha():
+            if l[0] == "#" or len(l) < 2 or not l[0].isalpha():
                 continue
             if l[ACTION] == ACCEPTED:
                 if l[BLOCK_HASH] not in haveFollowing:
